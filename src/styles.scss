@@ -1,1 +1,25 @@
 /* You can add global styles to this file, and also import other style files */
+@import "https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css";
+@import "https://fonts.googleapis.com/icon?family=Material+Icons";
+@import 'https://fonts.googleapis.com/css?family=Titillium+Web&display=swap';
+@import '~@angular/material/theming';
+
+@include mat-core();
+$custom-primary: mat-palette($mat-gray, 900);
+$custom-accent:  mat-palette($mat-green, A700);
+$custom-theme: mat-light-theme($custom-primary, $custom-accent);
+@include angular-material-theme($custom-theme);
+
+
+$custom-typography: mat-typography-config(
+  $font-family: 'Titillium Web'
+);
+@include mat-core($custom-typography);
+
+html, body {
+  font-family: 'Titillium Web';
+  // color: rgb(255, 255, 255);
+  // background-color: rgb(66, 66, 66);
+  color: rgba(0, 0, 0, 0.87);
+  background-color: white;
+}

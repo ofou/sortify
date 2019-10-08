@@ -1,0 +1,8 @@
+<h1>Playlists</h1>
+<mat-progress-spinner *ngIf="loading" color="primary" mode="indeterminate"></mat-progress-spinner>
+<mat-action-list *ngIf="!loading">
+  <a mat-list-item [routerLink]="['playlist', playlist.id]" *ngFor="let playlist of playlists">
+    <img matListAvatar src="{{ playlist.images[0]?.url || fallbackImage }}" />
+    <h3 matLine>{{ playlist.name }}</h3>
+  </a>
+</mat-action-list>
