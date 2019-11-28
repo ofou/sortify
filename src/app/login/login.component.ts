@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService, ScopesBuilder, AuthConfig, TokenService } from '../spotify-auth';
 import { Router } from '@angular/router';
+import { AuthConfig, AuthService, ScopesBuilder, TokenService } from '../spotify-auth';
 
 @Component({
   selector: 'sort-login',
@@ -24,7 +24,12 @@ export class LoginComponent implements OnInit {
       response_type: 'token',
       redirect_uri: 'http://localhost:4200/authorized', // My URL
       state: '',
-      scope: 'playlist-read-private',
+      scope: [
+        'playlist-read-private',
+        'playlist-read-collaborative',
+        'playlist-modify-public',
+        'playlist-modify-private',
+      ],
       show_dialog: true,
     };
     this.authService.configure(ac).authorize();

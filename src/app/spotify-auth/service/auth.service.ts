@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 
-import { AuthConfig } from '../shared/spotify-auth-config.i';
-import { SpotifyAuthResponse } from '../shared/spotify-auth-response.i';
-import { ScopesBuilder } from '../shared/scopes-builder';
 import { BehaviorSubject } from 'rxjs';
 import { Observable } from 'rxjs';
+import { ScopesBuilder } from '../shared/scopes-builder';
+import { AuthConfig } from '../shared/spotify-auth-config.i';
+import { SpotifyAuthResponse } from '../shared/spotify-auth-response.i';
 
 @Injectable()
 export class AuthService {

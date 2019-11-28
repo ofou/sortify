@@ -1,15 +1,4 @@
-<td-chart [style.height.px]="500"
-          [config]="config">
-</td-chart>
 <mat-toolbar color="primary" class="mat-elevation-z2">
-    <button mat-icon-button [routerLink]="['/home']">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-  <span>Smart Playlist</span>
-</mat-toolbar>
-
-<mat-progress-spinner *ngIf="loading" color="primary" mode="indeterminate"></mat-progress-spinner>
-<div [style.display]="loading ? 'none' : 'block'">
   <button mat-raised-button color="primary" (click)="sortSmartly()">Sort Intelligently</button>
 
   <mat-form-field>
@@ -19,6 +8,9 @@
     </mat-select>
   </mat-form-field>
 
+  <button mat-raised-button color="primary" (click)="savePlaylist()">Save</button>
+</mat-toolbar>
+<div class="table-wrapper">
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
     <ng-container matColumnDef="index">
       <th mat-header-cell *matHeaderCellDef></th>
@@ -37,7 +29,12 @@
           <mat-icon *ngIf="!isPlaying(track.preview_url)">play_arrow</mat-icon>
           <mat-icon *ngIf="isPlaying(track.preview_url)">stop</mat-icon>
         </button>
-        <mat-progress-bar *ngIf="isPlaying(track.preview_url)" mode="determinate" [value]="playTime" color="accent"></mat-progress-bar>
+        <mat-progress-bar
+          *ngIf="isPlaying(track.preview_url)"
+          mode="determinate"
+          [value]="playTime"
+          color="accent"
+        ></mat-progress-bar>
       </td>
     </ng-container>
 
@@ -155,3 +152,4 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
 </div>
+<!-- <td-chart [style.height.px]="500" [config]="config"></td-chart> -->

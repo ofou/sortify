@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { AuthService } from '../service/auth.service';
-import { ActivatedRoute, Router, Params } from '@angular/router';
 
 @Component({
   selector: 'spotify-auth',
@@ -13,7 +13,7 @@ export class SpotifyAuthComponent implements OnInit {
   public constructor(
     private authService: AuthService,
     private activatedRoute: ActivatedRoute,
-    private router: Router
+    private router: Router,
   ) {}
 
   public ngOnInit(): void {

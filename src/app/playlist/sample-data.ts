@@ -25,8 +25,6 @@ export const SAMPLE_DATA: any = [
     genres: ['dirty south rap', 'gangster rap', 'hip hop', 'pop rap', 'rap', 'southern hip hop', 'trap music'],
   },
 
-
-
   {
     artistPair: 'Big Pun-Young Buck',
     genres: ['gangster rap', 'hardcore hip hop', 'hip hop', 'pop rap', 'rap', 'southern hip hop'],

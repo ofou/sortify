@@ -5,7 +5,7 @@ import { SpotifyAuthResponse } from '../shared/spotify-auth-response.i';
 
 @Injectable()
 export class TokenService {
-  private token = '';
+  private token = localStorage.getItem('sortify');
   private token$ = new BehaviorSubject(this.token);
 
   public get oAuthToken(): string {
@@ -14,6 +14,7 @@ export class TokenService {
 
   public clearToken(): void {
     this.token = '';
+    localStorage.removeItem('sortify');
     this.token$.next(this.token);
   }
 
@@ -28,6 +29,7 @@ export class TokenService {
   public setAuthToken(spotifyResponse: SpotifyAuthResponse): boolean {
     if (!!spotifyResponse && !!spotifyResponse.access_token) {
       this.token = spotifyResponse.access_token;
+      localStorage.setItem('sortify', this.token);
     } else {
       this.token = '';
     }

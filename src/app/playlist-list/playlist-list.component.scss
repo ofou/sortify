@@ -1,0 +1,30 @@
+:host {
+  margin: auto;
+  width: 95vw;
+  display: block;
+  padding-left: 16px;
+}
+
+.background-image {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  height: calc(100% - 35px);
+}
+
+mat-card-title,
+mat-card-subtitle {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+::ng-deep {
+  .mat-card-header-text {
+    max-width: 100%;
+  }
+}
+
+mat-card {
+  height: 100%;
+}

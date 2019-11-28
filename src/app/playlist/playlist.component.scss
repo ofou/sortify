@@ -1,0 +1,17 @@
+mat-form-field {
+  font-size: initial;
+}
+
+:host {
+  display: block;
+}
+
+mat-toolbar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+}
+
+.table-wrapper {
+}

@@ -1,10 +1,10 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 import { Routes } from '@angular/router';
 
 import { SpotifyAuthComponent } from './component/spotify-auth.component';
+import { AuthGuard } from './service/auth.guard';
 import { AuthService } from './service/auth.service';
 import { TokenService } from './service/token.service';
-import { AuthGuard } from './service/auth.guard';
 
 const routes: Routes = [
   {

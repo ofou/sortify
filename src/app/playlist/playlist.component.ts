@@ -1,26 +1,18 @@
-import { Component, OnInit, OnDestroy, ViewChild, ChangeDetectorRef, ViewChildren, QueryList } from '@angular/core';
-import { SpotifyWebApiService, ITrack, ARTIST_PAIR_JOINER } from '../spotify-web-api.service';
-import { Router, ParamMap, ActivatedRoute, Params } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
-import { fromEvent } from 'rxjs';
-import { MatTableDataSource, MatTable } from '@angular/material/table';
-import { MatSort } from '@angular/material/sort';
-import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
-import { MatSelectChange } from '@angular/material/select';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatRipple } from '@angular/material/core';
-import { groupBy } from 'lodash-es';
-import { Dictionary } from 'lodash';
-import { SAMPLE_DATA } from './sample-data';
+import { MatSelectChange } from '@angular/material/select';
+import { MatSort } from '@angular/material/sort';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
 import { EChartOption, ECharts } from 'echarts';
-
-function randomColor(): string {
-  return '#' + Math.floor(Math.random() * 16777215).toString(16);
-}
-
-interface IEdges {
-  source: string;
-  target: string;
-}
+import { Dictionary } from 'lodash';
+import { groupBy } from 'lodash-es';
+import { fromEvent } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { ARTIST_PAIR_JOINER, IPlaylistArtistsGraph, ITrack, SpotifyWebApiService } from '../spotify-web-api.service';
+import { StateService } from '../state/state.service';
+import { SAMPLE_DATA } from './sample-data';
 
 @Component({
   selector: 'sort-playlist',
@@ -32,22 +24,15 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     private spotifyWebApiService: SpotifyWebApiService,
     private route: ActivatedRoute,
     fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private _stateService: StateService,
   ) {}
 
   config: any = {
-    // tooltip: {},
-    // xAxis: {
-    //   show: false,
-    // },
-    // yAxis: {
-    //   show: false,
-    // },
-
     series: [
       {
         type: 'graph',
-        layout: 'force',
+        layout: 'circular',
         data: [],
         edges: [],
         label: {
@@ -58,7 +43,6 @@ export class PlaylistComponent implements OnInit, OnDestroy {
         },
         roam: true,
         focusNodeAdjacency: true,
-
       },
     ],
   };
@@ -95,7 +79,11 @@ export class PlaylistComponent implements OnInit, OnDestroy {
 
   sortBy: FormControl = new FormControl([]);
 
-  loading = true;
+  playlistId: string;
+
+  get loading(): boolean {
+    return this._stateService.loading;
+  }
 
   // energy, danceability, key, speechiness, tempo, time_signature no, valence
 
@@ -108,59 +96,24 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     return 0;
   }
   async ngOnInit() {
+    this._stateService.setLoading(true);
     this.route.paramMap.subscribe(async (params: ParamMap) => {
-      this.tracks = await this.spotifyWebApiService.getPlaylistTracksWithFeatures(params.get('playlistId'));
+      this.playlistId = params.get('playlistId');
+
+      const [tracks, { data, edges }] = await Promise.all([
+        this.spotifyWebApiService.getPlaylistTracksWithFeatures(this.playlistId),
+        this.spotifyWebApiService.getPlaylistArtistGraph(this.playlistId),
+      ]);
+      this.tracks = tracks;
 
       this.initialTracks = this.tracks;
       this.createDataSource();
-      this.loading = false;
 
-      const artistHash = await this.spotifyWebApiService.getPlaylistArtistGraph(params.get('playlistId'));
-      console.log(artistHash);
-      const edges: IEdges[] = artistHash.map(({ artistPair }: any) => {
-        const artists: string[] = artistPair.split(ARTIST_PAIR_JOINER);
-        const artistA: string = artists[0];
-        const artistB: string = artists[1];
-
-        if (!this.config.series[0].data.find(item => item.id === artistA)) {
-          this.config.series[0].data = [
-            ...this.config.series[0].data,
-            {
-              id: artistA,
-              name: artistA,
-              itemStyle: {
-                normal: {
-                  color: randomColor(),
-                },
-              },
-            },
-          ];
-        }
-
-        if (!this.config.series[0].data.find(item => item.id === artistB)) {
-          this.config.series[0].data = [
-            ...this.config.series[0].data,
-            {
-              id: artistB,
-              name: artistB,
-              itemStyle: {
-                normal: {
-                  color: randomColor(),
-                },
-              },
-            },
-          ];
-        }
-
-        return {
-          source: artistA,
-          target: artistB,
-        };
-      });
-
+      this.config.series[0].data = data;
       this.config.series[0].edges = edges;
-      this.config = JSON.parse(JSON.stringify(this.config));
-      console.log(this.config);
+      this.updateChart();
+
+      this._stateService.setLoading(false);
 
       this.route.queryParamMap.subscribe((queryParams: ParamMap) => {
         if (queryParams) {
@@ -176,6 +129,9 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     });
   }
 
+  updateChart(): void {
+    this.config = JSON.parse(JSON.stringify(this.config));
+  }
   changeFilter(change: MatSelectChange): void {
     const queryParams: Params = change.value.length ? { filters: change.value.join(',') } : undefined;
 
@@ -189,6 +145,15 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     this.dataSource = new MatTableDataSource(this.tracks);
     this.sort.sort({ disableClear: false, id: undefined, start: 'asc' });
     this.dataSource.sort = this.sort;
+  }
+
+  async savePlaylist(): Promise<void> {
+    this._stateService.setLoading(true);
+    const updatedOrder: string[] = this.dataSource
+      .sortData(this.dataSource.filteredData, this.dataSource.sort)
+      .map((track: ITrack) => track.uri);
+    await this.spotifyWebApiService.updatePlaylist(this.playlistId, updatedOrder);
+    this._stateService.setLoading(false);
   }
 
   ngOnDestroy() {
@@ -324,7 +289,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
             .map(({ id, release_date }) => ({ id, release_date }))
             .sort(
               (a: IReleaseDate, b: IReleaseDate) =>
-                new Date(b.release_date).getTime() - new Date(a.release_date).getTime()
+                new Date(b.release_date).getTime() - new Date(a.release_date).getTime(),
             );
         case 'duration_ms':
           return this.initialTracks

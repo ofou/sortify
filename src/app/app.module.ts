@@ -1,19 +1,21 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { SpotifyAuthModule } from './spotify-auth';
-import { SpotifyAuthInterceptor2 } from './spotify-auth.interceptor';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { LoginComponent } from './login/login.component';
-import { PlaylistListComponent } from './playlist-list/playlist-list.component';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MaterialModule } from './material.module';
-import { PlaylistComponent } from './playlist/playlist.component';
 import { CovalentBaseEchartsModule } from '@covalent/echarts/base';
 import { CovalentGraphEchartsModule } from '@covalent/echarts/graph';
+import { LoginComponent } from './login/login.component';
+import { MaterialModule } from './material.module';
+import { PlaylistListComponent } from './playlist-list/playlist-list.component';
+import { PlaylistComponent } from './playlist/playlist.component';
+import { SpotifyAuthModule } from './spotify-auth';
+import { SpotifyAuthInterceptor2 } from './spotify-auth.interceptor';
+import { StateService } from './state/state.service';
+
 @NgModule({
   declarations: [AppComponent, LoginComponent, PlaylistListComponent, PlaylistComponent],
   imports: [
@@ -32,6 +34,7 @@ import { CovalentGraphEchartsModule } from '@covalent/echarts/graph';
       useClass: SpotifyAuthInterceptor2,
       multi: true,
     },
+    StateService,
   ],
   bootstrap: [AppComponent],
 })

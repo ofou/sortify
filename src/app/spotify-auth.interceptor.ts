@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { TokenService, SpotifyAuthInterceptor } from './spotify-auth';
+import { SpotifyAuthInterceptor, TokenService } from './spotify-auth';
 
 @Injectable()
 export class SpotifyAuthInterceptor2 extends SpotifyAuthInterceptor {

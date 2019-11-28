@@ -61,11 +61,11 @@ export class ScopesBuilder {
   public build(): string {
     const buffer: string[] = [];
 
-    this.scopes.forEach(scope => {
+    this.scopes.forEach((scope) => {
       if (typeof scope === 'string') {
         buffer.push(scope);
       } else {
-        Object.keys(scope).forEach(property => buffer.push(scope[property]));
+        Object.keys(scope).forEach((property) => buffer.push(scope[property]));
       }
     });
 
