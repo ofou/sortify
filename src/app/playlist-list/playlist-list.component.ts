@@ -1,11 +1,8 @@
-// const Spotify = require('spotify-web-api-js');
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, Observable, of, Subscription } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
-import { TokenService } from '../spotify-auth/service';
 import { SpotifyWebApiService } from '../spotify-web-api.service';
 import { StateService } from '../state/state.service';
+
+const FALLBACK_IMG = 'https://developer.spotify.com/assets/branding-guidelines/icon3@2x.png';
 
 @Component({
   selector: 'sort-playlist-list',
@@ -13,20 +10,10 @@ import { StateService } from '../state/state.service';
   styleUrls: ['./playlist-list.component.scss'],
 })
 export class PlaylistListComponent implements OnInit {
-  private apiUserUrl = 'https://api.spotify.com/v1/me';
-  private stream: Subscription | null = null;
-  private user: {} = {};
-  private user$: BehaviorSubject<{}>;
+  constructor(private spotifyWebApiService: SpotifyWebApiService, private _stateService: StateService) {}
 
-  constructor(
-    private tokenSvc: TokenService,
-    private http: HttpClient,
-    private spotifyWebApiService: SpotifyWebApiService,
-    private _stateService: StateService,
-  ) {}
-
-  playlists: any[] = [];
-  fallbackImage = 'https://developer.spotify.com/assets/branding-guidelines/icon3@2x.png';
+  playlists: SpotifyApi.PlaylistObjectSimplified[] = [];
+  playlistFilter = '';
 
   async ngOnInit(): Promise<void> {
     this._stateService.setLoading(true);
@@ -37,11 +24,16 @@ export class PlaylistListComponent implements OnInit {
     }
     this._stateService.setLoading(false);
   }
+  get filteredPlaylists(): SpotifyApi.PlaylistObjectSimplified[] {
+    return this.playlists.filter((playlist) => {
+      if (this.playlistFilter) {
+        return playlist.name.toLowerCase().indexOf(this.playlistFilter.toLowerCase()) > -1;
+      }
+      return true;
+    });
+  }
 
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      (result as any) = error;
-      return of(result as T);
-    };
+  getImage(playlist: SpotifyApi.PlaylistObjectSimplified): string {
+    return (playlist.images[0] && playlist.images[0].url) || FALLBACK_IMG;
   }
 }

@@ -1,27 +1,14 @@
 <h1>Playlists</h1>
+<mat-form-field>
+  <input matInput type="text" placeholder="Filter" [(ngModel)]="playlistFilter" />
+  <button mat-button *ngIf="playlistFilter" matSuffix mat-icon-button aria-label="Clear" (click)="playlistFilter = ''">
+    <mat-icon>close</mat-icon>
+  </button>
+</mat-form-field>
+
 <mat-action-list>
-  <a mat-list-item [routerLink]="['playlist', playlist.id]" *ngFor="let playlist of playlists">
-    <img matListAvatar src="{{ playlist.images[0]?.url || fallbackImage }}" />
+  <a mat-list-item [routerLink]="['playlist', playlist.id]" *ngFor="let playlist of filteredPlaylists">
+    <img matListAvatar [src]="getImage(playlist)" />
     <h3 matLine>{{ playlist.name }}</h3>
   </a>
 </mat-action-list>
-
-<!-- <mat-grid-list cols="6" rowHeight="1:1.25" gutterSize="1em">
-  <mat-grid-tile *ngFor="let playlist of playlists">
-    <a [routerLink]="['playlist', playlist.id]" [style.display]="'block'" [style.width.%]="100" [style.height.%]="100">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>{{ playlist.name }}</mat-card-title>
-        </mat-card-header>
-        <div
-          [style.width.%]="100"
-          class="background-image"
-          [ngStyle]="{
-
-            'background-image': 'url(' + playlist.images[0]?.url || fallbackImage + ')'
-          }"
-        ></div>
-      </mat-card>
-    </a>
-  </mat-grid-tile>
-</mat-grid-list> -->

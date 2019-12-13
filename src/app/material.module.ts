@@ -16,6 +16,8 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 const modules: any[] = [
   MatButtonModule,
@@ -36,6 +38,8 @@ const modules: any[] = [
   MatCardModule,
   MatGridListModule,
   MatSnackBarModule,
+  MatInputModule,
+  MatFormFieldModule,
 ];
 
 @NgModule({

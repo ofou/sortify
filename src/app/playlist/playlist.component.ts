@@ -6,7 +6,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
 import { EChartOption, ECharts } from 'echarts';
-import { Dictionary } from 'lodash';
+import { Dictionary } from 'lodash-es';
 import { groupBy } from 'lodash-es';
 import { fromEvent } from 'rxjs';
 import { switchMap } from 'rxjs/operators';

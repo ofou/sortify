@@ -9,7 +9,7 @@ import { StateService } from './state/state.service';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  title = 'smart-playlists';
+  title = 'sortify';
 
   constructor(
     private authService: AuthService,

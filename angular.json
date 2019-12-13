@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "smart-playlists": {
+    "sortify": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/smart-playlists",
+            "outputPath": "dist/sortify",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -62,18 +62,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "smart-playlists:build"
+            "browserTarget": "sortify:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "smart-playlists:build:production"
+              "browserTarget": "sortify:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "smart-playlists:build"
+            "browserTarget": "sortify:build"
           }
         },
         "test": {
@@ -99,16 +99,16 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "smart-playlists:serve"
+            "devServerTarget": "sortify:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "smart-playlists:serve:production"
+              "devServerTarget": "sortify:serve:production"
             }
           }
         }
       }
     }
   },
-  "defaultProject": "smart-playlists"
+  "defaultProject": "sortify"
 }
