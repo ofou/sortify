@@ -8,7 +8,9 @@
     </mat-select>
   </mat-form-field>
 
-  <button mat-raised-button color="primary" (click)="savePlaylist()">Save</button>
+  <button *ngIf="ownsPlaylist" mat-raised-button color="primary" (click)="savePlaylist()">Save</button>
+
+  <button *ngIf="!ownsPlaylist" mat-raised-button color="primary" (click)="saveAsPlaylist()">Save as</button>
 </mat-toolbar>
 <div class="table-wrapper">
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
@@ -22,15 +24,15 @@
       <td mat-cell *matCellDef="let track">
         <button
           mat-icon-button
-          [matTooltip]="isPlaying(track.preview_url) ? 'Stop' : 'Play'"
-          (click)="play(track.preview_url)"
-          [disabled]="!track.preview_url"
+          [matTooltip]="isPlaying(track) ? 'Stop' : 'Play'"
+          (click)="play(track)"
+          [disabled]="!getPreviewUrl(track)"
         >
-          <mat-icon *ngIf="!isPlaying(track.preview_url)">play_arrow</mat-icon>
-          <mat-icon *ngIf="isPlaying(track.preview_url)">stop</mat-icon>
+          <mat-icon *ngIf="!isPlaying(track)">play_arrow</mat-icon>
+          <mat-icon *ngIf="isPlaying(track)">stop</mat-icon>
         </button>
         <mat-progress-bar
-          *ngIf="isPlaying(track.preview_url)"
+          *ngIf="isPlaying(track)"
           mode="determinate"
           [value]="playTime"
           color="accent"
@@ -43,7 +45,7 @@
       <td mat-cell *matCellDef="let track">
         <mat-list>
           <mat-list-item>
-            <img matListAvatar src="{{ track.image_url }}" />
+            <img matListAvatar [src]="getAlbumImageUrl(track)" />
           </mat-list-item>
         </mat-list>
       </td>
@@ -52,7 +54,7 @@
     <ng-container matColumnDef="web_url">
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let track">
-        <a mat-icon-button matTooltip="Open on Spotify" href="{{ track.web_url }}" target="_blank">
+        <a mat-icon-button matTooltip="Open on Spotify" [href]="getSpotifyUrl(track)" target="_blank">
           <mat-icon>open_in_new</mat-icon>
         </a>
       </td>
@@ -60,34 +62,35 @@
 
     <ng-container matColumnDef="name">
       <th mat-sort-header mat-header-cell *matHeaderCellDef>Name</th>
-      <td mat-cell *matCellDef="let track">{{ track.name }}</td>
+      <td mat-cell *matCellDef="let track">{{ getName(track) }}</td>
     </ng-container>
 
     <ng-container matColumnDef="artists">
       <th mat-sort-header mat-header-cell *matHeaderCellDef>Artists</th>
-      <td mat-cell *matCellDef="let track" [matTooltip]="allArtists(track.artists)">{{ track.artists[0] }}</td>
+      <td mat-cell *matCellDef="let track">{{ getFirstArtist(track) }}</td>
     </ng-container>
 
     <ng-container matColumnDef="album_name">
       <th mat-sort-header mat-header-cell *matHeaderCellDef>Album</th>
-      <td mat-cell *matCellDef="let track">{{ track.album_name }}</td>
+      <td mat-cell *matCellDef="let track">{{ getAlbumName(track) }}</td>
     </ng-container>
 
     <ng-container matColumnDef="release_date">
       <th mat-sort-header mat-header-cell *matHeaderCellDef>Release Date</th>
-      <td mat-cell *matCellDef="let track">{{ track.release_date | date: 'shortDate' }}</td>
+      <td mat-cell *matCellDef="let track">{{ getReleaseDate(track) | date: 'shortDate' }}</td>
     </ng-container>
 
     <ng-container matColumnDef="added_at">
       <th mat-sort-header mat-header-cell *matHeaderCellDef>added_at</th>
-      <td mat-cell *matCellDef="let track">{{ track.added_at | date: 'short' }}</td>
+      <td mat-cell *matCellDef="let track">{{ getAddedAt(track) | date: 'short' }}</td>
     </ng-container>
 
     <ng-container matColumnDef="duration_ms">
       <th mat-sort-header mat-header-cell *matHeaderCellDef>Duration</th>
-      <td mat-cell *matCellDef="let track">{{ createDate(track.duration_ms) | date: 'mm:ss' }}</td>
+      <td mat-cell *matCellDef="let track">{{ getDuration(track) | date: 'mm:ss' }}</td>
     </ng-container>
 
+    <!--AUDIO FEATURES-->
     <ng-container matColumnDef="acousticness">
       <th mat-sort-header mat-header-cell *matHeaderCellDef>Acousticness</th>
       <td mat-cell *matCellDef="let track">{{ track.acousticness }}</td>
@@ -152,4 +155,3 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
 </div>
-<!-- <td-chart [style.height.px]="500" [config]="config"></td-chart> -->
