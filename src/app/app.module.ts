@@ -15,9 +15,10 @@ import { PlaylistComponent } from './playlist/playlist.component';
 import { SpotifyAuthModule } from './spotify-auth';
 import { SpotifyAuthInterceptor2 } from './spotify-auth.interceptor';
 import { StateService } from './state/state.service';
+import { FooterComponent } from './footer/footer.component';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, PlaylistListComponent, PlaylistComponent],
+  declarations: [AppComponent, LoginComponent, PlaylistListComponent, PlaylistComponent, FooterComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

@@ -3,7 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { PlaylistListComponent } from './playlist-list/playlist-list.component';
 import { PlaylistComponent } from './playlist/playlist.component';
-import { AuthGuard, SpotifyAuthModule } from './spotify-auth';
+import { AuthGuard } from './spotify-auth';
+import { AuthorizedComponent } from './spotify-auth/component/spotify-auth.component';
 
 const routes: Routes = [
   {
@@ -16,20 +17,19 @@ const routes: Routes = [
     component: LoginComponent,
   },
   {
-    path: 'home',
-    component: PlaylistListComponent,
+    path: 'authorized',
     canActivate: [AuthGuard],
+    component: AuthorizedComponent,
   },
   {
-    path: 'home/playlist',
-    redirectTo: 'home',
-  },
-  {
-    path: 'home/playlist/:playlistId',
+    path: 'playlist/:playlistId',
     component: PlaylistComponent,
     canActivate: [AuthGuard],
   },
-  SpotifyAuthModule.authRoutes()[0],
+  {
+    path: 'playlist',
+    redirectTo: '/',
+  },
   {
     path: '**',
     redirectTo: '',

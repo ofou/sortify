@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { chunk, intersection, uniqBy } from 'lodash-es';
 import { stringify } from 'querystring';
 import SpotifyWebApi from 'spotify-web-api-js';
-import { TokenService } from './spotify-auth/service';
-import { StateService } from './state/state.service';
+import { TokenService } from '../spotify-auth/service';
+import { StateService } from '../state/state.service';
 
 export const ARTIST_PAIR_JOINER = '<!_!>';
 const spotifyApi = new SpotifyWebApi();

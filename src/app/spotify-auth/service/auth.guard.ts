@@ -27,7 +27,6 @@ export class AuthGuard implements CanActivate, CanActivateChild {
   ) {}
 
   public async canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
-    // if (!!this.tokenSvc.oAuthToken) {
     try {
       spotifyApi.setAccessToken(this.tokenSvc.oAuthToken);
       const userDetails: SpotifyApi.CurrentUsersProfileResponse = await spotifyApi.getMe();
@@ -37,23 +36,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
     } catch {
       const canActivate: boolean = this.canActivateChild(next, state);
       if (!canActivate) {
-        const ac: AuthConfig = {
-          client_id: '727f47bff18244eb83ad879e8ad30682', // WebPortal App Id. Shoud be config
-          response_type: 'token',
-          redirect_uri: 'http://localhost:4200/authorized', // My URL
-          state: state.url,
-          scope: [
-            'playlist-read-private',
-            'playlist-read-collaborative',
-            'playlist-modify-public',
-            'playlist-modify-private',
-          ],
-          show_dialog: true,
-        };
-        this.authService.configure(ac).authorize();
-        // this.router.navigate(['login']);
-        // }
-        // return false;
+        this.router.navigate(['login']);
       }
       return canActivate;
     }

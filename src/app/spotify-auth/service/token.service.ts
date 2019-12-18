@@ -3,23 +3,35 @@ import { Observable } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
 import { SpotifyAuthResponse } from '../shared/spotify-auth-response.i';
 
+const TOKEN_KEY = 'SORTIFY_AUTH_TOKEN';
+
+function getToken(): string {
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+function setToken(token: string): void {
+  localStorage.setItem(TOKEN_KEY, token);
+}
+
+function clearToken(): void {
+  localStorage.removeItem(TOKEN_KEY);
+}
+
 @Injectable()
 export class TokenService {
-  private token = localStorage.getItem('sortify');
-  private token$ = new BehaviorSubject(this.token);
+  private token$ = new BehaviorSubject(getToken());
 
   public get oAuthToken(): string {
-    return this.token;
+    return getToken();
   }
 
   public clearToken(): void {
-    this.token = '';
-    localStorage.removeItem('sortify');
-    this.token$.next(this.token);
+    clearToken();
+    this.token$.next(getToken());
   }
 
   public get authHeader(): { [name: string]: string } {
-    return this.token ? { Authorization: `Bearer ${this.token}` } : {};
+    return getToken() ? { Authorization: `Bearer ${getToken()}` } : {};
   }
 
   public get authTokens(): Observable<string> {
@@ -28,12 +40,11 @@ export class TokenService {
 
   public setAuthToken(spotifyResponse: SpotifyAuthResponse): boolean {
     if (!!spotifyResponse && !!spotifyResponse.access_token) {
-      this.token = spotifyResponse.access_token;
-      localStorage.setItem('sortify', this.token);
+      setToken(spotifyResponse.access_token);
     } else {
-      this.token = '';
+      clearToken();
     }
-    this.token$.next(this.token);
-    return !!this.token;
+    this.token$.next(getToken());
+    return !!getToken();
   }
 }

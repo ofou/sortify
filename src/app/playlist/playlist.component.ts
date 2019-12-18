@@ -6,13 +6,19 @@ import { MatSort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
 import { EChartOption, ECharts } from 'echarts';
-import { Dictionary } from 'lodash-es';
+import { Dictionary } from 'lodash';
 import { groupBy } from 'lodash-es';
 import { fromEvent } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { ARTIST_PAIR_JOINER, IPlaylistArtistsGraph, ITrack, SpotifyWebApiService } from '../spotify-web-api.service';
+import {
+  ARTIST_PAIR_JOINER,
+  IPlaylistArtistsGraph,
+  ITrack,
+  SpotifyWebApiService,
+} from '../services/spotify-web-api.service';
 import { StateService } from '../state/state.service';
 import { SAMPLE_DATA } from './sample-data';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'sort-playlist',
@@ -26,6 +32,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     fb: FormBuilder,
     private router: Router,
     private _stateService: StateService,
+    private matSnackBar: MatSnackBar,
   ) {}
 
   config: any = {
@@ -153,6 +160,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
       .sortData(this.dataSource.filteredData, this.dataSource.sort)
       .map((track: ITrack) => track.uri);
     await this.spotifyWebApiService.updatePlaylist(this.playlistId, updatedOrder);
+    this.matSnackBar.open('Saved!');
     this._stateService.setLoading(false);
   }
 

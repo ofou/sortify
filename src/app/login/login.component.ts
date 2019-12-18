@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthConfig, AuthService, ScopesBuilder, TokenService } from '../spotify-auth';
-
+import { buildAuthUrl } from '../spotify-auth/service/auth.service';
+export const CLIENT_ID: string = '727f47bff18244eb83ad879e8ad30682';
+export const AUTHORIZED_ROUTE: string = 'authorized';
 @Component({
   selector: 'sort-login',
   templateUrl: './login.component.html',
@@ -11,18 +13,19 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     if (!!this.tokenSvc.oAuthToken) {
-      this.router.navigate(['home']);
+      this.router.navigate(['/']);
     }
   }
-
-  public login(): void {
+  get loginUrl(): string {
     const scopes = new ScopesBuilder() /* .withScopes(ScopesBuilder.LIBRARY) */
       .build();
 
+    const redirectUri: URL = new URL(window.location.origin);
+    redirectUri.pathname = `/${AUTHORIZED_ROUTE}`;
     const ac: AuthConfig = {
-      client_id: '727f47bff18244eb83ad879e8ad30682', // WebPortal App Id. Shoud be config
+      client_id: CLIENT_ID,
       response_type: 'token',
-      redirect_uri: 'http://localhost:4200/authorized', // My URL
+      redirect_uri: redirectUri.href,
       state: '',
       scope: [
         'playlist-read-private',
@@ -32,6 +35,6 @@ export class LoginComponent implements OnInit {
       ],
       show_dialog: true,
     };
-    this.authService.configure(ac).authorize();
+    return buildAuthUrl(ac);
   }
 }

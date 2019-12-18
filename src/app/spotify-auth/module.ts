@@ -1,7 +1,7 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { Routes } from '@angular/router';
 
-import { SpotifyAuthComponent } from './component/spotify-auth.component';
+import { AuthorizedComponent } from './component/spotify-auth.component';
 import { AuthGuard } from './service/auth.guard';
 import { AuthService } from './service/auth.service';
 import { TokenService } from './service/token.service';
@@ -10,12 +10,12 @@ const routes: Routes = [
   {
     path: 'authorized',
     canActivate: [AuthGuard],
-    component: SpotifyAuthComponent,
+    component: AuthorizedComponent,
   },
 ];
 
 @NgModule({
-  declarations: [SpotifyAuthComponent],
+  declarations: [AuthorizedComponent],
   providers: [],
 })
 export class SpotifyAuthModule {

@@ -6,12 +6,11 @@ mat-form-field {
   display: block;
 }
 
-mat-toolbar {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
+.table-wrapper {
+  overflow: auto;
 }
 
-.table-wrapper {
+.mat-cell,
+.mat-header-cell {
+  padding: 8px;
 }

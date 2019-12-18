@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SpotifyWebApiService } from '../spotify-web-api.service';
+import { SpotifyWebApiService } from '../services/spotify-web-api.service';
 import { StateService } from '../state/state.service';
 
 const FALLBACK_IMG = 'https://developer.spotify.com/assets/branding-guidelines/icon3@2x.png';
