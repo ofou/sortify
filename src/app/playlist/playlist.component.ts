@@ -5,7 +5,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
 import { fromEvent } from 'rxjs';
-import { SpotifyWebApiService, ICombined } from '../services/spotify-web-api.service';
+import { SpotifyWebApiService, ITrackWFeatures } from '../services/spotify-web-api.service';
 import { StateService } from '../state/state.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -27,10 +27,10 @@ export class PlaylistComponent implements OnInit, OnDestroy {
 
   playlistId: string;
   playlist: SpotifyApi.SinglePlaylistResponse;
-  tracks: ICombined[];
-  initialTracks: ICombined[];
+  tracks: ITrackWFeatures[];
+  initialTracks: ITrackWFeatures[];
 
-  dataSource: MatTableDataSource<ICombined>;
+  dataSource: MatTableDataSource<ITrackWFeatures>;
   audio: HTMLAudioElement;
 
   sortableColumns: string[] = [
@@ -134,7 +134,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     this._stateService.setLoading(true);
     const updatedOrder: string[] = this.dataSource
       .sortData(this.dataSource.filteredData, this.dataSource.sort)
-      .map((track: ICombined) => track.uri);
+      .map((track: ITrackWFeatures) => track.uri);
     await this.spotifyWebApiService.updatePlaylist(this.playlistId, updatedOrder);
     this.matSnackBar.open('Saved!');
     this._stateService.setLoading(false);
@@ -150,7 +150,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     // this._stateService.setLoading(false);
   }
 
-  async play(track: ICombined): Promise<void> {
+  async play(track: ITrackWFeatures): Promise<void> {
     // something is playing
     if (this.audio) {
       if (this.isPlaying(track)) {
@@ -170,47 +170,47 @@ export class PlaylistComponent implements OnInit, OnDestroy {
       await this.audio.play();
     }
   }
-  isPlaying(track: ICombined): boolean {
+  isPlaying(track: ITrackWFeatures): boolean {
     return !!this.audio && this.audio.src === this.getPreviewUrl(track);
   }
 
-  getPreviewUrl(track: ICombined): string {
+  getPreviewUrl(track: ITrackWFeatures): string {
     return track.track.preview_url;
   }
 
-  getAlbumImageUrl(track: ICombined): string {
+  getAlbumImageUrl(track: ITrackWFeatures): string {
     return track.track.album.images[0].url;
   }
 
-  getSpotifyUrl(track: ICombined): string {
+  getSpotifyUrl(track: ITrackWFeatures): string {
     return track.track.external_urls.spotify;
   }
 
-  getName(track: ICombined): string {
+  getName(track: ITrackWFeatures): string {
     return track.track.name;
   }
 
-  getFirstArtist(track: ICombined): string {
+  getFirstArtist(track: ITrackWFeatures): string {
     return track.track.artists[0].name;
   }
 
-  getAddedAt(track: ICombined): string {
+  getAddedAt(track: ITrackWFeatures): string {
     return track.added_at;
   }
 
-  getDuration(track: ICombined): Date {
+  getDuration(track: ITrackWFeatures): Date {
     return new Date(track.track.duration_ms);
   }
 
-  getAllArtists(track: ICombined): string {
+  getAllArtists(track: ITrackWFeatures): string {
     return track.track.artists.map((artist) => artist.name).join(', ');
   }
 
-  getAlbumName(track: ICombined): string {
+  getAlbumName(track: ITrackWFeatures): string {
     return track.track.album.name;
   }
 
-  getReleaseDate(track: ICombined): string {
+  getReleaseDate(track: ITrackWFeatures): string {
     return new Date((track.track.album as any).release_date).toISOString();
   }
 

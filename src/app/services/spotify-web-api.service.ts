@@ -9,12 +9,12 @@ const spotifyApi = new SpotifyWebApi();
 
 const MAX_LIMIT = 50;
 
-export interface ICombined extends SpotifyApi.PlaylistTrackObject, SpotifyApi.AudioFeaturesObject {}
+export interface ITrackWFeatures extends SpotifyApi.PlaylistTrackObject, SpotifyApi.AudioFeaturesObject {}
 
 function mergeTrackInfo(
   tracks: SpotifyApi.PlaylistTrackResponse,
   trackFeatures: SpotifyApi.MultipleAudioFeaturesResponse,
-): ICombined[] {
+): ITrackWFeatures[] {
   if (tracks) {
     return tracks.items.map((track, index: number) => ({
       ...track,
@@ -102,7 +102,7 @@ export class SpotifyWebApiService {
     );
   }
 
-  async getPlaylistTracksWithFeatures(playlistId: string): Promise<ICombined[]> {
+  async getPlaylistTracksWithFeatures(playlistId: string): Promise<ITrackWFeatures[]> {
     const tracks: SpotifyApi.PlaylistTrackResponse = await this.getPlaylistTracks(playlistId);
     const trackFeatures: SpotifyApi.MultipleAudioFeaturesResponse = await this.getFeaturesOfTracks(
       tracks.items.map(({ track }) => track.id),
