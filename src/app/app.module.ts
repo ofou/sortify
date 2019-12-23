@@ -16,9 +16,17 @@ import { SpotifyAuthModule } from './spotify-auth';
 import { SpotifyAuthInterceptor2 } from './spotify-auth.interceptor';
 import { StateService } from './state/state.service';
 import { FooterComponent } from './footer/footer.component';
+import { SavePlaylistAsDialogComponent } from './save-playlist-as-dialog/save-playlist-as-dialog.component';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, PlaylistListComponent, PlaylistComponent, FooterComponent],
+  declarations: [
+    AppComponent,
+    LoginComponent,
+    PlaylistListComponent,
+    PlaylistComponent,
+    FooterComponent,
+    SavePlaylistAsDialogComponent,
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -38,5 +46,6 @@ import { FooterComponent } from './footer/footer.component';
     StateService,
   ],
   bootstrap: [AppComponent],
+  entryComponents: [SavePlaylistAsDialogComponent],
 })
 export class AppModule {}

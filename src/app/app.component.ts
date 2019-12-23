@@ -24,7 +24,7 @@ export class AppComponent {
     private authService: AuthService,
     private router: Router,
     private tokenSvc: TokenService,
-    public _stateService: StateService,
+    private _stateService: StateService,
     private _sanitizer: DomSanitizer,
   ) {
     this.fallbackUserImage = this._sanitizer.bypassSecurityTrustResourceUrl(

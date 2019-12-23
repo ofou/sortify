@@ -8,6 +8,11 @@ import { fromEvent } from 'rxjs';
 import { SpotifyWebApiService, ITrackWFeatures } from '../services/spotify-web-api.service';
 import { StateService } from '../state/state.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import {
+  SavePlaylistAsDialogComponent,
+  ISavePlaylistDialogData,
+} from '../save-playlist-as-dialog/save-playlist-as-dialog.component';
 
 @Component({
   selector: 'sort-playlist',
@@ -21,6 +26,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     private router: Router,
     private _stateService: StateService,
     private matSnackBar: MatSnackBar,
+    private _matDialog: MatDialog,
   ) {}
 
   @ViewChild(MatSort, { static: false }) sort: MatSort;
@@ -131,23 +137,17 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   }
 
   async savePlaylist(): Promise<void> {
-    this._stateService.setLoading(true);
     const updatedOrder: string[] = this.dataSource
       .sortData(this.dataSource.filteredData, this.dataSource.sort)
       .map((track: ITrackWFeatures) => track.uri);
-    await this.spotifyWebApiService.updatePlaylist(this.playlistId, updatedOrder);
-    this.matSnackBar.open('Saved!');
-    this._stateService.setLoading(false);
-  }
-
-  async saveAsPlaylist(): Promise<void> {
-    // this._stateService.setLoading(true);
-    // const updatedOrder: string[] = this.dataSource
-    //   .sortData(this.dataSource.filteredData, this.dataSource.sort)
-    //   .map((track: ITrack) => track.uri);
-    // await this.spotifyWebApiService.updatePlaylist(this.playlistId, updatedOrder);
-    // this.matSnackBar.open('Saved!');
-    // this._stateService.setLoading(false);
+    const data: ISavePlaylistDialogData = {
+      saveAs: !this.ownsPlaylist,
+      playlistId: this.playlist.id,
+      tracks: updatedOrder,
+    };
+    this._matDialog.open(SavePlaylistAsDialogComponent, {
+      data,
+    });
   }
 
   async play(track: ITrackWFeatures): Promise<void> {

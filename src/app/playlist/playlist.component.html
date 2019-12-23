@@ -8,9 +8,9 @@
     </mat-select>
   </mat-form-field>
 
-  <button *ngIf="ownsPlaylist" mat-raised-button color="primary" (click)="savePlaylist()">Save</button>
-
-  <button *ngIf="!ownsPlaylist" mat-raised-button color="primary" (click)="saveAsPlaylist()">Save as</button>
+  <button mat-raised-button color="primary" (click)="savePlaylist()">
+    {{ ownsPlaylist ? 'Save' : 'Save as' }}
+  </button>
 </mat-toolbar>
 <div class="table-wrapper">
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>

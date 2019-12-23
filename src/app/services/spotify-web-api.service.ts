@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { chunk, intersection, uniqBy } from 'lodash-es';
-import { stringify } from 'querystring';
+import { chunk } from 'lodash-es';
 import SpotifyWebApi from 'spotify-web-api-js';
 import { TokenService } from '../spotify-auth/service';
 import { StateService } from '../state/state.service';
@@ -82,6 +81,16 @@ export class SpotifyWebApiService {
 
   async updatePlaylist(playlistId: string, trackIds: string[]): Promise<SpotifyApi.ReplacePlaylistTracksResponse> {
     return await spotifyApi.replaceTracksInPlaylist(playlistId, trackIds);
+  }
+
+  async createPlaylist(playlistName: string, trackIds: string[]): Promise<SpotifyApi.ReplacePlaylistTracksResponse> {
+    const user: SpotifyApi.CurrentUsersProfileResponse = this._stateService.userProfile;
+    const playlist: SpotifyApi.CreatePlaylistResponse = await spotifyApi.createPlaylist(user.id, {
+      name: playlistName,
+      public: false,
+      description: 'Created using Sortify',
+    });
+    return await spotifyApi.replaceTracksInPlaylist(playlist.id, trackIds);
   }
 
   async getFeaturesOfTracks(trackIds: string[]): Promise<SpotifyApi.MultipleAudioFeaturesResponse> {
