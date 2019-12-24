@@ -10,9 +10,14 @@ import { StateService } from '../state/state.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {
-  SavePlaylistAsDialogComponent,
+  SavePlaylistDialogComponent,
   ISavePlaylistDialogData,
-} from '../save-playlist-as-dialog/save-playlist-as-dialog.component';
+} from '../save-playlist-dialog/save-playlist-dialog.component';
+import { getAlbumCover } from '../shared';
+import {
+  IDeletePlaylistDialogData,
+  DeletePlaylistDialogComponent,
+} from '../delete-playlist-dialog/delete-playlist-dialog.component';
 
 @Component({
   selector: 'sort-playlist',
@@ -121,10 +126,10 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     }
   }
 
-  changeFilter(change: MatSelectChange): void {
+  async changeFilter(change: MatSelectChange): Promise<void> {
     const queryParams: Params = change.value.length ? { filters: change.value.join(',') } : undefined;
 
-    this.router.navigate([], {
+    await this.router.navigate([], {
       relativeTo: this.route,
       queryParams,
     });
@@ -145,7 +150,16 @@ export class PlaylistComponent implements OnInit, OnDestroy {
       playlistId: this.playlist.id,
       tracks: updatedOrder,
     };
-    this._matDialog.open(SavePlaylistAsDialogComponent, {
+    this._matDialog.open(SavePlaylistDialogComponent, {
+      data,
+    });
+  }
+
+  async delete(): Promise<void> {
+    const data: IDeletePlaylistDialogData = {
+      playlistId: this.playlist.id,
+    };
+    this._matDialog.open(DeletePlaylistDialogComponent, {
       data,
     });
   }
@@ -212,6 +226,10 @@ export class PlaylistComponent implements OnInit, OnDestroy {
 
   getReleaseDate(track: ITrackWFeatures): string {
     return new Date((track.track.album as any).release_date).toISOString();
+  }
+
+  get albumCover(): string {
+    return getAlbumCover(this.playlist);
   }
 
   // sortSmartly(): void {

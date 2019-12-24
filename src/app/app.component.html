@@ -1,7 +1,7 @@
 <mat-toolbar color="primary" class="mat-elevation-z2">
-  <a mat-button color="accent" routerLink="/" [style.font-size]="'x-large'">Sortify</a>
+  <a mat-button routerLink="/" class="logo">Sortify</a>
 
-  <span [style.flex]="1"></span>
+  <span class="flex-1"></span>
   <ng-container *ngIf="loggedIn">
     <button mat-icon-button [matMenuTriggerFor]="menu">
       <mat-icon>more_vert</mat-icon>

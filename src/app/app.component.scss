@@ -28,7 +28,7 @@ mat-toolbar {
   overflow: auto;
 
   margin: auto;
-  padding: 2em;
+  padding: 1em;
 }
 
 mat-progress-spinner {
@@ -38,4 +38,8 @@ mat-progress-spinner {
   bottom: 50%;
   right: 50%;
   margin: -50px 0 0 -50px;
+}
+
+.logo {
+  font-size: x-large;
 }

@@ -58,6 +58,10 @@ export class SpotifyWebApiService {
     return await spotifyApi.getPlaylist(playlistId);
   }
 
+  async deletePlaylist(playlistId: string): Promise<SpotifyApi.UnfollowPlaylistReponse> {
+    return await spotifyApi.unfollowPlaylist(playlistId);
+  }
+
   async getPlaylistTracks(playlistId: string): Promise<SpotifyApi.PlaylistTrackResponse> {
     const tracksResponse: SpotifyApi.PlaylistTrackResponse = await spotifyApi.getPlaylistTracks(playlistId, {
       limit: MAX_LIMIT,
@@ -83,14 +87,15 @@ export class SpotifyWebApiService {
     return await spotifyApi.replaceTracksInPlaylist(playlistId, trackIds);
   }
 
-  async createPlaylist(playlistName: string, trackIds: string[]): Promise<SpotifyApi.ReplacePlaylistTracksResponse> {
+  async createPlaylist(playlistName: string, trackIds: string[]): Promise<SpotifyApi.CreatePlaylistResponse> {
     const user: SpotifyApi.CurrentUsersProfileResponse = this._stateService.userProfile;
     const playlist: SpotifyApi.CreatePlaylistResponse = await spotifyApi.createPlaylist(user.id, {
       name: playlistName,
       public: false,
       description: 'Created using Sortify',
     });
-    return await spotifyApi.replaceTracksInPlaylist(playlist.id, trackIds);
+    await spotifyApi.replaceTracksInPlaylist(playlist.id, trackIds);
+    return playlist;
   }
 
   async getFeaturesOfTracks(trackIds: string[]): Promise<SpotifyApi.MultipleAudioFeaturesResponse> {

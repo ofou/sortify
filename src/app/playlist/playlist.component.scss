@@ -14,3 +14,13 @@ mat-form-field {
 .mat-header-cell {
   padding: 8px;
 }
+
+header {
+  display: flex;
+
+  img {
+    width: 10em;
+    margin-right: 2em;
+    border-radius: 50%;
+  }
+}
