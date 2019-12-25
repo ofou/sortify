@@ -7,23 +7,8 @@
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
-      <div
-        [ngStyle]="{
-          'display': 'flex',
-          'align-items': 'center',
-          'padding': '16px'
-        }"
-        (click)="$event.stopPropagation()"
-      >
-        <img
-          [src]="userImage"
-          [ngStyle]="{
-            'width': '24px',
-            'height': '24px',
-            'border-radius': '50%',
-            'margin-right': '16px'
-          }"
-        />
+      <div class="user-details" (click)="$event.stopPropagation()">
+        <img [src]="userImage" />
         <div>
           <div class="mat-caption">Signed in as</div>
           <div>

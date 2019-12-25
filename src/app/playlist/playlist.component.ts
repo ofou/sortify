@@ -1,23 +1,23 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
 import { fromEvent } from 'rxjs';
-import { SpotifyWebApiService, ITrackWFeatures } from '../services/spotify-web-api.service';
-import { StateService } from '../state/state.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {
-  SavePlaylistDialogComponent,
-  ISavePlaylistDialogData,
-} from '../save-playlist-dialog/save-playlist-dialog.component';
-import { getAlbumCover } from '../shared';
-import {
-  IDeletePlaylistDialogData,
   DeletePlaylistDialogComponent,
+  IDeletePlaylistDialogData,
 } from '../delete-playlist-dialog/delete-playlist-dialog.component';
+import {
+  ISavePlaylistDialogData,
+  SavePlaylistDialogComponent,
+} from '../save-playlist-dialog/save-playlist-dialog.component';
+import { ITrackWFeatures, SpotifyWebApiService } from '../services/spotify-web-api.service';
+import { getAlbumCover } from '../shared';
+import { StateService } from '../state/state.service';
 
 @Component({
   selector: 'sort-playlist',

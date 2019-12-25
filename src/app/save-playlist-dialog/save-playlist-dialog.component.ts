@@ -1,10 +1,10 @@
 import { Component, Inject } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { StateService } from '../state/state.service';
-import { SpotifyWebApiService } from '../services/spotify-web-api.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { SpotifyWebApiService } from '../services/spotify-web-api.service';
+import { StateService } from '../state/state.service';
 
 export interface ISavePlaylistDialogData {
   saveAs: boolean;

@@ -43,3 +43,16 @@ mat-progress-spinner {
 .logo {
   font-size: x-large;
 }
+
+.user-details {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+
+  img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin-right: 16px;
+  }
+}

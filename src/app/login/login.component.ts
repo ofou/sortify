@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthConfig, AuthService, ScopesBuilder, TokenService } from '../spotify-auth';
 import { buildAuthUrl } from '../spotify-auth/service/auth.service';
-export const CLIENT_ID: string = '727f47bff18244eb83ad879e8ad30682';
-export const AUTHORIZED_ROUTE: string = 'authorized';
+export const CLIENT_ID = '727f47bff18244eb83ad879e8ad30682';
+export const AUTHORIZED_ROUTE = 'authorized';
 @Component({
   selector: 'sort-login',
   templateUrl: './login.component.html',
