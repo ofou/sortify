@@ -1,7 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
-@import 'https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css';
+@import '~normalize.css';
 @import 'https://fonts.googleapis.com/icon?family=Material+Icons';
-@import url('https://fonts.googleapis.com/css?family=IBM+Plex+Mono&display=swap');
+@import 'https://fonts.googleapis.com/css?family=IBM+Plex+Mono&display=swap';
 @import '~@angular/material/theming';
 
 @include mat-core();

@@ -18,7 +18,55 @@ import {
 import { ITrackWFeatures, SpotifyWebApiService } from '../services/spotify-web-api.service';
 import { getAlbumCover } from '../shared';
 import { StateService } from '../state/state.service';
+import { shuffle } from 'lodash-es';
 
+enum ENonSortableColumns {
+  'index' = 'index',
+  'image_url' = 'image_url',
+  'preview_url' = 'preview_url',
+  'web_url' = 'web_url',
+}
+
+enum ESortableColumns {
+  'name' = 'name',
+  'artist' = 'artist',
+  'album_name' = 'album_name',
+  'release_date' = 'release_date',
+  'duration_ms' = 'duration_ms',
+  'added_at' = 'added_at',
+  'acousticness' = 'acousticness',
+  'danceability' = 'danceability',
+  'energy' = 'energy',
+  'instrumentalness' = 'instrumentalness',
+  'key' = 'key',
+  'liveness' = 'liveness',
+  'loudness' = 'loudness',
+  'mode' = 'mode',
+  'speechiness' = 'speechiness',
+  'tempo' = 'tempo',
+  'time_signature' = 'time_signature',
+  'valence' = 'valence',
+}
+
+function sortingDataAccessor(track: ITrackWFeatures, sortHeaderId: string): string | number {
+  if (sortHeaderId === ESortableColumns.name) {
+    return track.track.name;
+  } else if (sortHeaderId === ESortableColumns.artist) {
+    return track.track.artists[0].name;
+  } else if (sortHeaderId === ESortableColumns.album_name) {
+    return track.track.album.name;
+  } else if (sortHeaderId === ESortableColumns.release_date) {
+    return getReleaseDate(track);
+  } else if (sortHeaderId === ESortableColumns.duration_ms) {
+    return track.track.duration_ms;
+  } else {
+    return track[sortHeaderId];
+  }
+}
+
+function getReleaseDate(track: ITrackWFeatures): string {
+  return new Date((track.track.album as any).release_date).toISOString();
+}
 @Component({
   selector: 'sort-playlist',
   templateUrl: './playlist.component.html',
@@ -44,29 +92,13 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   dataSource: MatTableDataSource<ITrackWFeatures>;
   audio: HTMLAudioElement;
 
-  sortableColumns: string[] = [
-    'name',
-    'artists',
-    /// todo artist_id and album_id
-    'album_name',
-    'added_at',
-    'release_date',
-    'duration_ms',
+  ENonSortableColumns: typeof ENonSortableColumns = ENonSortableColumns;
+  ESortableColumns: typeof ESortableColumns = ESortableColumns;
 
-    'acousticness',
-    'danceability',
-    'energy',
-    'instrumentalness',
-    'key',
-    'liveness',
-    'loudness',
-    'mode',
-    'speechiness',
-    'tempo',
-    'time_signature',
-    'valence',
-  ];
-  displayedColumns: string[] = ['index', 'image_url', 'preview_url', 'web_url', ...this.sortableColumns];
+  sortableColumns: string[] = Object.keys(ESortableColumns);
+  nonSortableColumns: string[] = Object.keys(ENonSortableColumns);
+
+  displayedColumns: string[] = [...this.nonSortableColumns, ...this.sortableColumns];
 
   sortBy: FormControl = new FormControl([]);
 
@@ -139,6 +171,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     this.dataSource = new MatTableDataSource(this.tracks);
     this.sort.sort({ disableClear: false, id: undefined, start: 'asc' });
     this.dataSource.sort = this.sort;
+    this.dataSource.sortingDataAccessor = sortingDataAccessor;
   }
 
   async savePlaylist(): Promise<void> {
@@ -162,6 +195,16 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     this._matDialog.open(DeletePlaylistDialogComponent, {
       data,
     });
+  }
+
+  reset(): void {
+    this.tracks = this.initialTracks;
+    this.createDataSource();
+  }
+
+  shuffle(): void {
+    this.tracks = shuffle(this.initialTracks);
+    this.createDataSource();
   }
 
   async play(track: ITrackWFeatures): Promise<void> {
@@ -225,7 +268,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   }
 
   getReleaseDate(track: ITrackWFeatures): string {
-    return new Date((track.track.album as any).release_date).toISOString();
+    return getReleaseDate(track);
   }
 
   get albumCover(): string {
@@ -307,7 +350,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   //         return this.initialTracks
   //           .map(({ id, name }) => ({ id, name }))
   //           .sort((a: IName, b: IName) => b.name.localeCompare(a.name));
-  //       case 'artists':
+  //       case 'artist':
   //         return this.initialTracks
   //           .map(({ id, artists }) => ({ id, artist: artists[0] }))
   //           .sort((a: IArtist, b: IArtist) => b.artist.localeCompare(a.artist));

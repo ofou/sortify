@@ -1,7 +1,14 @@
 <h1>Playlists</h1>
 <mat-form-field>
   <input matInput type="text" placeholder="Filter" [(ngModel)]="playlistFilter" />
-  <button mat-button *ngIf="playlistFilter" matSuffix mat-icon-button aria-label="Clear" (click)="playlistFilter = ''">
+  <button
+    mat-icon-button
+    *ngIf="playlistFilter"
+    matSuffix
+    aria-label="Clear"
+    (click)="playlistFilter = ''"
+    matTooltip="Clear"
+  >
     <mat-icon>close</mat-icon>
   </button>
 </mat-form-field>
