@@ -87,12 +87,22 @@ export class SpotifyWebApiService {
     return await spotifyApi.replaceTracksInPlaylist(playlistId, trackIds);
   }
 
+  async updatePlaylistDetails(playlistId: string, details: object): Promise<SpotifyApi.ChangePlaylistDetailsReponse> {
+    return await spotifyApi.changePlaylistDetails(playlistId, details);
+  }
+
+  async getTop(): Promise<[SpotifyApi.UsersTopArtistsResponse, SpotifyApi.UsersTopTracksResponse]> {
+    return await Promise.all([
+      spotifyApi.getMyTopArtists({ time_range: 'long_term' }),
+      spotifyApi.getMyTopTracks({ time_range: 'long_term' }),
+    ]);
+  }
+
   async createPlaylist(playlistName: string, trackIds: string[]): Promise<SpotifyApi.CreatePlaylistResponse> {
     const user: SpotifyApi.CurrentUsersProfileResponse = this._stateService.userProfile;
     const playlist: SpotifyApi.CreatePlaylistResponse = await spotifyApi.createPlaylist(user.id, {
       name: playlistName,
       public: false,
-      description: 'Created using Sortify',
     });
     await spotifyApi.replaceTracksInPlaylist(playlist.id, trackIds);
     return playlist;

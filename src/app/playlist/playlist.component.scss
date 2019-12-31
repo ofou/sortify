@@ -24,3 +24,7 @@ header {
     border-radius: 50%;
   }
 }
+
+::ng-deep .mat-sort-header-sorted .mat-sort-header-arrow {
+  opacity: 1 !important;
+}

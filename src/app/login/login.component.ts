@@ -32,6 +32,7 @@ export class LoginComponent implements OnInit {
         'playlist-read-collaborative',
         'playlist-modify-public',
         'playlist-modify-private',
+        // 'user-top-read' // for top
       ],
       show_dialog: true,
     };

@@ -12,14 +12,9 @@
     </div>
   </header>
 
-  <!-- <button mat-button color="accent" (click)="sortSmartly()">Sort Intelligently</button> -->
-
-  <mat-form-field>
-    <mat-label>Sort by</mat-label>
-    <mat-select [formControl]="sortBy" multiple (selectionChange)="changeFilter($event)">
-      <mat-option *ngFor="let filter of sortableColumns" [value]="filter">{{ filter }}</mat-option>
-    </mat-select>
-  </mat-form-field>
+  <button mat-icon-button color="accent" (click)="sortSmartly()" matTooltip="Automatically sort smartly">
+    <mat-icon>flash_auto</mat-icon>
+  </button>
 
   <button mat-icon-button color="accent" (click)="savePlaylist()" matTooltip="Save">
     <mat-icon>save</mat-icon>
@@ -32,8 +27,18 @@
   <button *ngIf="ownsPlaylist" mat-icon-button color="warn" (click)="delete()" matTooltip="Delete">
     <mat-icon>delete_outline</mat-icon>
   </button>
+
+  <p *ngIf="sortedByString">{{ sortedByString }}</p>
   <div class="table-wrapper">
-    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
+    <table
+      mat-table
+      [dataSource]="dataSource"
+      class="mat-elevation-z8"
+      matSort
+      (matSortChange)="handleSortChange($event)"
+      [matSortActive]="matSortActive"
+      [matSortDirection]="matSortDirection"
+    >
       <ng-container [matColumnDef]="ENonSortableColumns.index">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let track; let i = index">{{ i }}</td>
@@ -82,12 +87,12 @@
 
       <!-- track.track-->
       <ng-container [matColumnDef]="ESortableColumns.name">
-        <th mat-sort-header mat-header-cell *matHeaderCellDef>Name</th>
+        <th mat-sort-header mat-header-cell *matHeaderCellDef>{{ ESortableColumns.name }}</th>
         <td mat-cell *matCellDef="let track">{{ getName(track) }}</td>
       </ng-container>
 
       <ng-container [matColumnDef]="ESortableColumns.artist">
-        <th mat-sort-header mat-header-cell *matHeaderCellDef>Artist</th>
+        <th mat-sort-header mat-header-cell *matHeaderCellDef>{{ ESortableColumns.artist }}</th>
         <td mat-cell *matCellDef="let track">{{ getFirstArtist(track) }}</td>
       </ng-container>
 
@@ -110,6 +115,11 @@
       <ng-container [matColumnDef]="ESortableColumns.added_at">
         <th mat-sort-header mat-header-cell *matHeaderCellDef>Added At</th>
         <td mat-cell *matCellDef="let track">{{ getAddedAt(track) | date: 'short' }}</td>
+      </ng-container>
+
+      <ng-container [matColumnDef]="ESortableColumns.popularity">
+        <th mat-sort-header mat-header-cell *matHeaderCellDef>Popularity</th>
+        <td mat-cell *matCellDef="let track">{{ getPopularity(track) }}</td>
       </ng-container>
 
       <!--AUDIO FEATURES-->

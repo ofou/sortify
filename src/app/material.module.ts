@@ -19,6 +19,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatRadioModule } from '@angular/material/radio';
 
 const modules: any[] = [
   MatButtonModule,
@@ -42,6 +43,7 @@ const modules: any[] = [
   MatInputModule,
   MatFormFieldModule,
   MatDialogModule,
+  MatRadioModule,
 ];
 
 @NgModule({
@@ -49,7 +51,7 @@ const modules: any[] = [
   exports: modules,
   providers: [
     { provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: 3000 } },
-    { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { disableClose: true } },
+    { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { disableClose: true, autoFocus: true, hasBackdrop: true } },
   ],
 })
 export class MaterialModule {}

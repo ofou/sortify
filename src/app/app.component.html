@@ -29,4 +29,6 @@
   <sort-footer></sort-footer>
 </div>
 
-<mat-progress-spinner *ngIf="loading" color="accent" mode="indeterminate"></mat-progress-spinner>
+<div *ngIf="loading" class="loading-overlay">
+  <mat-progress-spinner color="accent" mode="indeterminate"></mat-progress-spinner>
+</div>

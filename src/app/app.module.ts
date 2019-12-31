@@ -6,8 +6,6 @@ import { AppComponent } from './app.component';
 
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { CovalentBaseEchartsModule } from '@covalent/echarts/base';
-import { CovalentGraphEchartsModule } from '@covalent/echarts/graph';
 import { DeletePlaylistDialogComponent } from './delete-playlist-dialog/delete-playlist-dialog.component';
 import { FooterComponent } from './footer/footer.component';
 import { LoginComponent } from './login/login.component';
@@ -36,8 +34,6 @@ import { StateService } from './state/state.service';
     HttpClientModule,
     BrowserAnimationsModule,
     MaterialModule,
-    CovalentBaseEchartsModule,
-    CovalentGraphEchartsModule,
   ],
   providers: [
     {

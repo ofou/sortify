@@ -1,15 +1,21 @@
-<h2>{{ title }}</h2>
+<h2>Save playlist</h2>
 
 <p>{{ description }}</p>
 
-<mat-form-field *ngIf="saveAs">
+<mat-radio-group *ngIf="data.ownsPlaylist" [(ngModel)]="writeMode">
+  <mat-radio-button *ngFor="let writeMode of writeModes" [value]="writeMode">
+    {{ writeModeDescription(writeMode) }}
+  </mat-radio-button>
+</mat-radio-group>
+
+<mat-form-field>
   <input matInput placeholder="Playlist name" [formControl]="playlistNameFC" />
   <mat-error *ngIf="playlistNameFC.invalid">Required</mat-error>
 </mat-form-field>
 
 <div class="buttons">
   <button mat-button (click)="cancel()" [disabled]="loading">Cancel</button>
-  <button mat-button color="accent" (click)="save()" [disabled]="loading || (saveAs && playlistNameFC.invalid)">
+  <button mat-button color="accent" (click)="save()" [disabled]="loading || playlistNameFC.invalid">
     Save
   </button>
 </div>
