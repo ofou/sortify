@@ -7,9 +7,12 @@
 @include mat-core();
 
 $global-font: 'IBM Plex Mono', monospace;
-$custom-primary: mat-palette($mat-grey, 900);
+$custom-primary: mat-palette($mat-grey, 50);
 $custom-accent: mat-palette($mat-green, A700);
-$custom-theme: mat-light-theme($custom-primary, $custom-accent);
+$custom-theme: mat-dark-theme($custom-primary, $custom-accent);
+
+$background-color: #212121;
+
 @include angular-material-theme($custom-theme);
 
 $custom-typography: mat-typography-config(
@@ -20,10 +23,27 @@ $custom-typography: mat-typography-config(
 html,
 body {
   font-family: $global-font;
-  color: #000;
-  background-color: #fff;
+  color: white;
+  background-color: $background-color;
+}
+
+a {
+  color: white;
 }
 
 .flex-1 {
   flex: 1;
+}
+
+.mat-card {
+  height: unset !important;
+}
+
+.mat-card,
+.mat-table {
+  background-color: $background-color;
+}
+
+.mat-list-avatar {
+  border-radius: unset !important;
 }

@@ -12,7 +12,7 @@ export function buildAuthUrl(config: AuthConfig): string {
   const params = [];
   for (const [key, value] of Object.entries(config)) {
     if (typeof value === 'object') {
-      params.push(`${key}=${(value as string[]).join(' ')}`);
+      params.push(`${key}=${(<string[]>value).join(' ')}`);
     } else {
       params.push(`${key}=${value}`);
     }

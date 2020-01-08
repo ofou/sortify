@@ -52,7 +52,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
 
   private extractApiResponse(fragment: string): SpotifyAuthResponse | null {
     if (!!fragment) {
-      return fromPairs(fragment.split('&').map((s) => s.split('='))) as SpotifyAuthResponse;
+      return <SpotifyAuthResponse>fromPairs(fragment.split('&').map((s) => s.split('=')));
     }
     return null;
   }

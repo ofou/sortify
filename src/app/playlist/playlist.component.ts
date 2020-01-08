@@ -1,9 +1,8 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSelectChange } from '@angular/material/select';
 import { MatSort, Sort, SortDirection } from '@angular/material/sort';
-import { MatTableDataSource, MatTable } from '@angular/material/table';
-import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
+import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { fromEvent } from 'rxjs';
 import {
   DeletePlaylistDialogComponent,
@@ -16,7 +15,8 @@ import {
 import { ITrackWFeatures, SpotifyWebApiService } from '../services/spotify-web-api.service';
 import { getAlbumCover } from '../shared';
 import { StateService } from '../state/state.service';
-import { shuffle } from 'lodash-es';
+import { shuffle, groupBy } from 'lodash-es';
+import { Dictionary } from 'lodash';
 
 enum ENonSortableColumns {
   'index' = 'index',
@@ -71,7 +71,7 @@ function sortingDataAccessor(track: ITrackWFeatures, sortHeaderId: string): stri
 }
 
 function getReleaseDate(track: ITrackWFeatures): string {
-  return new Date((track.track.album as any).release_date).toISOString();
+  return new Date((<any>track.track.album).release_date).toISOString();
 }
 
 const sortableColumns: string[] = Object.keys(ESortableColumns);
@@ -107,15 +107,11 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   tracks: ITrackWFeatures[];
   initialTracks: ITrackWFeatures[];
 
-  dataSource: MatTableDataSource<ITrackWFeatures>;
+  dataSource: MatTableDataSource<ITrackWFeatures> = new MatTableDataSource();
   audio: HTMLAudioElement;
 
   ENonSortableColumns: typeof ENonSortableColumns = ENonSortableColumns;
   ESortableColumns: typeof ESortableColumns = ESortableColumns;
-  sortableColumns: string[] = sortableColumns;
-  sortOptions: string[] = sortableColumns.reduce((acc: string[], col: string) => {
-    return [...acc, `${col}-${EDirection.asc}`, `${col}-${EDirection.desc}`];
-  }, []);
   displayedColumns: string[] = [...nonSortableColumns, ...sortableColumns];
 
   matSortActive: string;
@@ -151,7 +147,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     if (this.matSortActive && this.matSortDirection) {
       return `Sorted by ${this.matSortActive} in ${this.directionString} order`;
     }
-    return undefined;
+    return 'no sorting';
   }
 
   get ownsPlaylist(): boolean {
@@ -161,56 +157,78 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.route.paramMap.subscribe(async (params: ParamMap) => {
       this._stateService.setLoading(true);
-
       this.playlistId = params.get('playlistId');
+
+      // const topPlaylists: SpotifyApi.PlaylistTrackResponse[] = await this.spotifyWebApiService.getTopSongsPlaylists();
+
+      // const topPlaylistsArtists: Dictionary<
+      //   SpotifyApi.PlaylistTrackObject[]
+      // >[] = topPlaylists.map((playlist: SpotifyApi.PlaylistTrackResponse) =>
+      //   groupBy(playlist.items, (item: SpotifyApi.PlaylistTrackObject) => item.track.artists[0].id),
+      // );
+      // console.log(topPlaylistsArtists);
+      // const sorted: string[][] = topPlaylistsArtists.map(
+      //   (playlistArtists: Dictionary<SpotifyApi.PlaylistTrackObject[]>, index: number) =>
+      //     Object.keys(playlistArtists).sort(
+      //       (artistA: string, artistB: string) =>
+      //         topPlaylistsArtists[index][artistB].length - topPlaylistsArtists[index][artistA].length,
+      //     ),
+      // );
+      // const map: any = sorted.map((artists: string[], index: number) =>
+      //   artists.map((artist: string) => [artist, topPlaylistsArtists[index][artist].length]),
+      // );
+      // console.log(map);
       try {
         this.playlist = await this.spotifyWebApiService.getPlaylist(this.playlistId);
       } catch {
         await this.router.navigate(['/']);
         return;
       }
-
-      const [playlist, tracks] = await Promise.all([
-        this.spotifyWebApiService.getPlaylist(this.playlistId),
-        this.spotifyWebApiService.getPlaylistTracksWithFeatures(this.playlistId),
-      ]);
-      this.playlist = playlist;
+      const tracks = await this.spotifyWebApiService.getPlaylistTracksWithFeatures(this.playlistId);
       this.tracks = tracks;
       this.initialTracks = this.tracks;
       this.createDataSource();
-      // await this.extractSortingData();
       this._stateService.setLoading(false);
 
       this.route.queryParamMap.subscribe(async (queryParams: ParamMap) => {
-        if (queryParams) {
-          const active: string = queryParams.get('active');
-          const direction: SortDirection = queryParams.get('direction') as SortDirection;
-          if (Object.keys(ESortableColumns).includes(active) && Object.keys(EDirection).includes(direction)) {
-            this.matSortActive = active;
-            this.matSortDirection = direction;
-            this.dataSource.sort = this.matSort;
-          } else {
-            // reset
-            this.matSortActive = undefined;
-            this.matSortDirection = undefined;
-            await this.router.navigate([], {
-              relativeTo: this.route,
-              queryParams: undefined,
-            });
-          }
+        const active: string = queryParams.get('active');
+        const direction: SortDirection = queryParams.get('direction') as SortDirection;
+        if (
+          active &&
+          direction &&
+          Object.keys(ESortableColumns).includes(active) &&
+          Object.keys(EDirection).includes(direction)
+        ) {
+          this.matSortActive = active;
+          this.matSortDirection = direction;
+          this.createDataSource();
+        } else {
+          this.matSortActive = undefined;
+          this.matSortDirection = undefined;
+          this.matSort.sort({ id: '', start: 'asc', disableClear: false });
+          this.createDataSource();
+          await this.resetQueryParams();
         }
       });
+    });
+  }
+
+  async resetQueryParams(): Promise<void> {
+    await this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: undefined,
     });
   }
 
   ngOnDestroy() {
     if (this.audio) {
       this.audio.pause();
+      this.audio = undefined;
     }
   }
 
   createDataSource(): void {
-    this.dataSource = new MatTableDataSource(this.tracks);
+    this.dataSource.data = this.tracks;
     this.dataSource.sort = this.matSort;
     this.dataSource.sortingDataAccessor = sortingDataAccessor;
   }
@@ -222,6 +240,18 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     });
   }
 
+  async update(): Promise<void> {
+    const test: RegExpExecArray = DESCRIPTION_REGEX.exec(this.playlist.description);
+    if (test && test[1]) {
+      const [active, direction, originalPlaylistId]: string[] = test[1].split(SEPARATOR);
+      const tracks = await this.spotifyWebApiService.getPlaylistTracksWithFeatures(originalPlaylistId);
+      this.tracks = tracks;
+
+      this.createDataSource();
+      this.matSortActive = active;
+      this.matSortDirection = direction as SortDirection;
+    }
+  }
   async extractSortingData(): Promise<void> {
     const test: RegExpExecArray = DESCRIPTION_REGEX.exec(this.playlist.description);
     if (test && test[1]) {
@@ -237,18 +267,15 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     const updatedOrder: string[] = this.dataSource
       .sortData(this.dataSource.filteredData, this.dataSource.sort)
       .map((track: ITrackWFeatures) => track.uri);
-
-    let playlistDescription: string = this.playlist.description;
-    playlistDescription = playlistDescription.replace(DESCRIPTION_REGEX, '');
-    playlistDescription =
-      playlistDescription +
-      ' ' +
-      `${DESCRIPTION_PREFIX}${this.matSortActive}${SEPARATOR}${this.matSortDirection}${DESCRIPTION_SUFFIX}`;
-
     let playlistName: string = this.playlist.name;
-    playlistName = playlistName.replace(TITLE_REGEX, '').trim();
+    let playlistDescription: string = this.playlist.description;
     if (this.directionString && this.matSortActive) {
-      playlistName = `${playlistName} ${TITLE_PREFIX} ${this.directionString} ${this.matSortActive}`;
+      playlistName = `${playlistName.replace(TITLE_REGEX, '').trim()} ${TITLE_PREFIX} ${this.directionString} ${
+        this.matSortActive
+      }`;
+      playlistDescription = `${playlistDescription.replace(DESCRIPTION_REGEX, '').trim()} ${DESCRIPTION_PREFIX}${
+        this.matSortActive
+      }${SEPARATOR}${this.matSortDirection}${SEPARATOR}${this.playlistId}${DESCRIPTION_SUFFIX}`;
     }
 
     const data: ISavePlaylistDialogData = {
@@ -272,13 +299,15 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     });
   }
 
-  reset(): void {
+  async reset(): Promise<void> {
     this.tracks = this.initialTracks;
+    await this.resetQueryParams();
     this.createDataSource();
   }
 
-  shuffle(): void {
+  async shuffle(): Promise<void> {
     this.tracks = shuffle(this.initialTracks);
+    await this.resetQueryParams();
     this.createDataSource();
   }
 

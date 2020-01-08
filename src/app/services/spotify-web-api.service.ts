@@ -91,13 +91,6 @@ export class SpotifyWebApiService {
     return await spotifyApi.changePlaylistDetails(playlistId, details);
   }
 
-  async getTop(): Promise<[SpotifyApi.UsersTopArtistsResponse, SpotifyApi.UsersTopTracksResponse]> {
-    return await Promise.all([
-      spotifyApi.getMyTopArtists({ time_range: 'long_term' }),
-      spotifyApi.getMyTopTracks({ time_range: 'long_term' }),
-    ]);
-  }
-
   async createPlaylist(playlistName: string, trackIds: string[]): Promise<SpotifyApi.CreatePlaylistResponse> {
     const user: SpotifyApi.CurrentUsersProfileResponse = this._stateService.userProfile;
     const playlist: SpotifyApi.CreatePlaylistResponse = await spotifyApi.createPlaylist(user.id, {
@@ -106,6 +99,23 @@ export class SpotifyWebApiService {
     });
     await spotifyApi.replaceTracksInPlaylist(playlist.id, trackIds);
     return playlist;
+  }
+
+  async getTop(): Promise<[SpotifyApi.UsersTopArtistsResponse, SpotifyApi.UsersTopTracksResponse]> {
+    return await Promise.all([
+      spotifyApi.getMyTopArtists({ time_range: 'long_term' }),
+      spotifyApi.getMyTopTracks({ time_range: 'long_term' }),
+    ]);
+  }
+
+  async getTopSongsPlaylists(): Promise<SpotifyApi.PlaylistTrackResponse[]> {
+    const topSongsPlaylists: SpotifyApi.CategoryPlaylistsReponse = await spotifyApi.getCategoryPlaylists('2019');
+    const playlistPromises: Promise<
+      SpotifyApi.PlaylistTrackResponse
+    >[] = topSongsPlaylists.playlists.items
+      .filter((playlist: SpotifyApi.PlaylistObjectSimplified) => playlist.name.startsWith('Your Top Songs'))
+      .map((playlist: SpotifyApi.PlaylistObjectSimplified) => this.getPlaylistTracks(playlist.id));
+    return await Promise.all(playlistPromises);
   }
 
   async getFeaturesOfTracks(trackIds: string[]): Promise<SpotifyApi.MultipleAudioFeaturesResponse> {

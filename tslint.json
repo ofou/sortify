@@ -2,6 +2,7 @@
   "extends": ["tslint:recommended", "tslint-sonarts", "tslint-angular", "tslint-config-prettier"],
   "rules": {
     "array-type": [true, "array"],
-    "no-floating-promises": true
+    "no-floating-promises": true,
+    "no-angle-bracket-type-assertion": false
   }
 }
