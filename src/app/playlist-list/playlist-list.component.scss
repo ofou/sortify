@@ -25,3 +25,9 @@ mat-card {
 mat-form-field {
   width: 100%;
 }
+
+p {
+  mat-icon {
+    vertical-align: text-bottom;
+  }
+}

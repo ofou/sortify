@@ -58,7 +58,9 @@ export class AppComponent {
 
   get userImage(): string | SafeResourceUrl {
     return (
-      (this._stateService.userProfile.images && this._stateService.userProfile.images[0].url) || this.fallbackUserImage
+      (this._stateService.userProfile.images &&
+        this._stateService.userProfile.images[this._stateService.userProfile.images.length - 1].url) ||
+      this.fallbackUserImage
     );
   }
 }

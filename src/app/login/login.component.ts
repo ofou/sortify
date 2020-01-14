@@ -7,6 +7,7 @@ export const AUTHORIZED_ROUTE = 'authorized';
 @Component({
   selector: 'sort-login',
   templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit {
   constructor(private authService: AuthService, private tokenSvc: TokenService, private router: Router) {}

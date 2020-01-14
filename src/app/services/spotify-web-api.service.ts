@@ -138,10 +138,11 @@ export class SpotifyWebApiService {
 
   async getPlaylistTracksWithFeatures(playlistId: string): Promise<ITrackWFeatures[]> {
     const tracks: SpotifyApi.PlaylistTrackResponse = await this.getPlaylistTracks(playlistId);
+    // filter out empty tracks
+    tracks.items = tracks.items.filter((track: SpotifyApi.PlaylistTrackObject) => track.track);
     const trackFeatures: SpotifyApi.MultipleAudioFeaturesResponse = await this.getFeaturesOfTracks(
       tracks.items.map(({ track }) => track.id),
     );
-
     return mergeTrackInfo(tracks, trackFeatures);
   }
 }

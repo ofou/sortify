@@ -2,7 +2,7 @@
   <header>
     <img [src]="albumCover" />
 
-    <div class="flex-1">
+    <section class="flex-1">
       <h1>
         {{ playlist.name }}
       </h1>
@@ -40,7 +40,7 @@
           <mat-icon>open_in_new</mat-icon>
         </a>
       </p>
-    </div>
+    </section>
   </header>
 
   <button mat-icon-button color="accent" (click)="sortSmartly()" matTooltip="Automatically sort smartly">

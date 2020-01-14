@@ -19,3 +19,8 @@
     <h3 matLine>{{ playlist.name }}</h3>
   </a>
 </mat-action-list>
+
+<p *ngIf="playlistFilter && filteredPlaylists.length === 0">
+  <mat-icon>sentiment_very_dissatisfied</mat-icon>
+  No playlists match the filter.
+</p>

@@ -17,10 +17,27 @@ mat-form-field {
 
 header {
   display: flex;
+  flex-direction: row;
+  align-items: center;
+  align-content: center;
 
   img {
-    width: 10em;
-    margin-right: 2em;
+    object-fit: contain;
+    padding-right: 1em;
+    width: 19em;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+
+    img {
+      padding-right: 0;
+      width: 100%;
+      max-width: calc(100vh / 2);
+    }
   }
 }
 

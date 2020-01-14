@@ -33,6 +33,6 @@ export class PlaylistListComponent implements OnInit {
   }
 
   getAlbumCover(playlist: SpotifyApi.PlaylistObjectSimplified): string {
-    return getAlbumCover(playlist);
+    return getAlbumCover(playlist, false);
   }
 }

@@ -266,7 +266,8 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   async savePlaylist(): Promise<void> {
     const updatedOrder: string[] = this.dataSource
       .sortData(this.dataSource.filteredData, this.dataSource.sort)
-      .map((track: ITrackWFeatures) => track.uri);
+      .map((track: ITrackWFeatures) => track.uri)
+      .filter((uri: string) => !!uri);
     let playlistName: string = this.playlist.name;
     let playlistDescription: string = this.playlist.description;
     if (this.directionString && this.matSortActive) {
@@ -340,7 +341,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   }
 
   getAlbumImageUrl(track: ITrackWFeatures): string {
-    return track.track.album.images[0].url;
+    return track.track.album.images[track.track.album.images.length - 1].url;
   }
 
   getSpotifyUrl(track: ITrackWFeatures): string {
@@ -380,7 +381,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   }
 
   get albumCover(): string {
-    return getAlbumCover(this.playlist);
+    return getAlbumCover(this.playlist, true);
   }
 
   async sortSmartly(): Promise<void> {}
