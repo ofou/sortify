@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { AuthConfig, AuthService, ScopesBuilder, TokenService } from './spotify-auth';
+import { TokenService } from './spotify-auth';
 import { StateService } from './state/state.service';
 
 const USER_SVG = `
@@ -18,10 +18,8 @@ const USER_SVG = `
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  title = 'sortify';
   fallbackUserImage: SafeResourceUrl;
   constructor(
-    private authService: AuthService,
     private router: Router,
     private tokenSvc: TokenService,
     private _stateService: StateService,
@@ -31,17 +29,10 @@ export class AppComponent {
       `data:image/svg+xml,${encodeURIComponent(USER_SVG)}`,
     );
   }
-
-  ngOnInit(): void {
-    // this._stateService.setLoading(true);
-    this.authService.authorizedStream.pipe(filter((x: boolean) => x)).subscribe(() => {
-      this.router.navigate(['/']);
-      // this._stateService.setLoading(false);
-    });
-  }
-  logout(): void {
+  async logout(): Promise<void> {
+    this._stateService.resetUserProfile();
     this.tokenSvc.clearToken();
-    this.router.navigate(['login']);
+    await this.router.navigate(['login']);
   }
 
   get username(): string {

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { StateService } from '../../state/state.service';
-import { AuthService } from '../service/auth.service';
 
 @Component({
   selector: 'spotify-auth',
@@ -10,31 +9,33 @@ import { AuthService } from '../service/auth.service';
 })
 export class AuthorizedComponent implements OnInit {
   public constructor(
-    private authService: AuthService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private _stateService: StateService,
   ) {}
 
-  public ngOnInit(): void {
+  public async ngOnInit(): Promise<void> {
     this._stateService.setLoading(true);
     const params: URLSearchParams = new URLSearchParams(this.activatedRoute.snapshot.fragment);
     let redirectToUrl: string;
     for (const param of params) {
       if (param[0] === 'state') {
-        redirectToUrl = decodeURIComponent(param[1]);
+        redirectToUrl = decodeURIComponent(atob(param[1]));
       }
     }
 
-    this.authService.authorized();
     if (redirectToUrl && redirectToUrl !== '/') {
-      setTimeout(() => {
-        const split: string[] = redirectToUrl.split('?filters=');
-        const path: string = split[0];
-        const queryParams: Params = split[1] ? { filters: split[1] } : {};
-        // TODO: wait properly
-        this.router.navigate([path], { queryParams });
+      setTimeout(async () => {
+        const url: URL = new URL(window.location.origin + redirectToUrl);
+        const queryParams: Params = {};
+        url.searchParams.forEach((value: string, key: string) => {
+          queryParams[key] = value;
+        });
+
+        await this.router.navigate([url.pathname], { queryParams });
       });
+    } else {
+      await this.router.navigate(['/']);
     }
     this._stateService.setLoading(false);
   }

@@ -2,7 +2,6 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/c
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-
 import { TokenService } from './token.service';
 
 @Injectable()
@@ -13,6 +12,6 @@ export abstract class SpotifyAuthInterceptor implements HttpInterceptor {
 
   public intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const authReq = req.clone({ setHeaders: this.tokenSvc.authHeader });
-    return next.handle(authReq).pipe(tap((event: HttpEvent<any>) => {}, this.doOnError));
+    return next.handle(authReq).pipe(tap(() => {}, this.doOnError));
   }
 }

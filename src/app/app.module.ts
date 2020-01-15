@@ -12,11 +12,11 @@ import { LoginComponent } from './login/login.component';
 import { MaterialModule } from './material.module';
 import { PlaylistListComponent } from './playlist-list/playlist-list.component';
 import { PlaylistComponent } from './playlist/playlist.component';
+import { ReorderingAnimationComponent } from './reordering-animation/reordering-animation.component';
 import { SavePlaylistDialogComponent } from './save-playlist-dialog/save-playlist-dialog.component';
 import { SpotifyAuthModule } from './spotify-auth';
 import { SpotifyAuthInterceptor2 } from './spotify-auth.interceptor';
 import { StateService } from './state/state.service';
-import { ReorderingAnimationComponent } from './reordering-animation/reordering-animation.component';
 
 @NgModule({
   declarations: [

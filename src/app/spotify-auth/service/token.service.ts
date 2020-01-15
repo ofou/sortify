@@ -1,9 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
-import { SpotifyAuthResponse } from '../shared/spotify-auth-response.i';
 
 const TOKEN_KEY = 'SORTIFY_AUTH_TOKEN';
+
+export interface SpotifyAuthResponse {
+  access_token: string;
+  expires_in: number;
+  state: string;
+  token_type: string;
+}
 
 function getToken(): string {
   return localStorage.getItem(TOKEN_KEY);

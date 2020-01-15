@@ -3,6 +3,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSort, Sort, SortDirection } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { Dictionary } from 'lodash';
+import { groupBy, shuffle } from 'lodash-es';
 import { fromEvent } from 'rxjs';
 import {
   DeletePlaylistDialogComponent,
@@ -15,8 +17,6 @@ import {
 import { ITrackWFeatures, SpotifyWebApiService } from '../services/spotify-web-api.service';
 import { getAlbumCover } from '../shared';
 import { StateService } from '../state/state.service';
-import { shuffle, groupBy } from 'lodash-es';
-import { Dictionary } from 'lodash';
 
 enum ENonSortableColumns {
   'index' = 'index',

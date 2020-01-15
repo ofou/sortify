@@ -3,7 +3,6 @@ import { Routes } from '@angular/router';
 
 import { AuthorizedComponent } from './component/spotify-auth.component';
 import { AuthGuard } from './service/auth.guard';
-import { AuthService } from './service/auth.service';
 import { TokenService } from './service/token.service';
 
 const routes: Routes = [
@@ -26,7 +25,7 @@ export class SpotifyAuthModule {
   public static forRoot(): ModuleWithProviders {
     return {
       ngModule: SpotifyAuthModule,
-      providers: [AuthService, TokenService, AuthGuard],
+      providers: [TokenService, AuthGuard],
     };
   }
 }

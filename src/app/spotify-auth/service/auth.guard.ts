@@ -1,30 +1,15 @@
 import { Injectable } from '@angular/core';
-import {
-  ActivatedRouteSnapshot,
-  CanActivate,
-  CanActivateChild,
-  Router,
-  RouterStateSnapshot,
-  UrlTree,
-} from '@angular/router';
-import { fromPairs } from 'lodash-es';
-
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import SpotifyWebApi from 'spotify-web-api-js';
 import { StateService } from 'src/app/state/state.service';
-import { AuthConfig } from '../shared';
-import { SpotifyAuthResponse } from '../shared/spotify-auth-response.i';
-import { AuthService } from './auth.service';
-import { TokenService } from './token.service';
+import { generateLoginUrl } from '../../shared';
+import { SpotifyAuthResponse, TokenService } from './token.service';
+
 const spotifyApi = new SpotifyWebApi();
 
 @Injectable()
-export class AuthGuard implements CanActivate, CanActivateChild {
-  constructor(
-    private authService: AuthService,
-    private tokenSvc: TokenService,
-    private router: Router,
-    private _stateService: StateService,
-  ) {}
+export class AuthGuard implements CanActivate {
+  constructor(private tokenSvc: TokenService, private router: Router, private _stateService: StateService) {}
 
   public async canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
     try {
@@ -34,26 +19,27 @@ export class AuthGuard implements CanActivate, CanActivateChild {
 
       return true;
     } catch {
-      const canActivate: boolean = this.canActivateChild(next, state);
-      if (!canActivate) {
-        this.router.navigate(['login']);
+      const response = this.getSpotifyAuthResponse(next);
+      if (response) {
+        this.tokenSvc.setAuthToken(response);
+        return true;
+      } else {
+        const currentUrl: string = state.url;
+        if (currentUrl === '/') {
+          await this.router.navigate(['login']);
+        } else {
+          window.location.href = generateLoginUrl(btoa(encodeURIComponent(currentUrl)));
+        }
+        return false;
       }
-      return canActivate;
     }
   }
 
-  public canActivateChild(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    const response = this.extractApiResponse(next.fragment);
-    if (response) {
-      this.tokenSvc.setAuthToken(response);
+  private getSpotifyAuthResponse(next: ActivatedRouteSnapshot): SpotifyAuthResponse {
+    if (!!next.fragment) {
+      const url: URLSearchParams = new URLSearchParams(next.fragment);
+      return <SpotifyAuthResponse>(<any>Object.fromEntries(url));
     }
-    return !!response;
-  }
-
-  private extractApiResponse(fragment: string): SpotifyAuthResponse | null {
-    if (!!fragment) {
-      return <SpotifyAuthResponse>fromPairs(fragment.split('&').map((s) => s.split('=')));
-    }
-    return null;
+    return undefined;
   }
 }
