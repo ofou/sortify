@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import SpotifyWebApi from 'spotify-web-api-js';
-import { StateService } from 'src/app/state/state.service';
-import { generateLoginUrl } from '../../shared';
+import { generateLoginUrl } from '../shared';
 import { SpotifyAuthResponse, TokenService } from './token.service';
+import { StateService } from '../services/state.service';
 
 const spotifyApi = new SpotifyWebApi();
 

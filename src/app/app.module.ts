@@ -16,7 +16,8 @@ import { ReorderingAnimationComponent } from './reordering-animation/reordering-
 import { SavePlaylistDialogComponent } from './save-playlist-dialog/save-playlist-dialog.component';
 import { SpotifyAuthModule } from './spotify-auth';
 import { SpotifyAuthInterceptor2 } from './spotify-auth.interceptor';
-import { StateService } from './state/state.service';
+import { StateService } from './services/state.service';
+import { AuthorizedComponent } from './authorized/authorized.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { StateService } from './state/state.service';
     SavePlaylistDialogComponent,
     DeletePlaylistDialogComponent,
     ReorderingAnimationComponent,
+    AuthorizedComponent,
   ],
   imports: [
     BrowserModule,

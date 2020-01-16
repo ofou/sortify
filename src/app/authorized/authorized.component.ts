@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { StateService } from '../../state/state.service';
+import { StateService } from '../services/state.service';
 
 @Component({
   selector: 'spotify-auth',
-  templateUrl: './spotify-auth.component.html',
-  styleUrls: ['./spotify-auth.component.scss'],
+  templateUrl: './authorized.component.html',
+  styleUrls: ['./authorized.component.scss'],
 })
 export class AuthorizedComponent implements OnInit {
   public constructor(

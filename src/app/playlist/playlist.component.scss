@@ -6,10 +6,6 @@ mat-form-field {
   display: block;
 }
 
-.table-wrapper {
-  overflow: auto;
-}
-
 .mat-cell,
 .mat-header-cell {
   padding: 8px;
@@ -47,4 +43,10 @@ header {
 
 td {
   padding: 0.25em 0.25em 0.25em 0;
+}
+
+.mat-table-sticky {
+  background: white;
+  color: black;
+  border-bottom-color: black;
 }

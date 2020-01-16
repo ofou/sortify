@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { chunk } from 'lodash-es';
 import SpotifyWebApi from 'spotify-web-api-js';
-import { TokenService } from '../spotify-auth/service';
-import { StateService } from '../state/state.service';
+import { StateService } from './state.service';
+import { TokenService } from '../spotify-auth';
 
 const spotifyApi = new SpotifyWebApi();
 

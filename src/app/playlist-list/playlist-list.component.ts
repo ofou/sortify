@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SpotifyWebApiService } from '../services/spotify-web-api.service';
 import { getAlbumCover } from '../shared';
-import { StateService } from '../state/state.service';
+import { StateService } from '../services/state.service';
 
 @Component({
   selector: 'sort-playlist-list',
