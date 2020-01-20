@@ -3,8 +3,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { shuffle, takeWhile } from 'lodash-es';
-import { fromEvent, Subject } from 'rxjs';
+import { shuffle } from 'lodash-es';
+import { fromEvent, Subject, interval } from 'rxjs';
 import {
   DeletePlaylistDialogComponent,
   IDeletePlaylistDialogData,
@@ -125,7 +125,8 @@ export class PlaylistComponent implements OnInit, OnDestroy {
 
   private userProfile: SpotifyApi.CurrentUsersProfileResponse;
 
-  private unsubscribe: Subject<void> = new Subject();
+  private destroySubject: Subject<void> = new Subject();
+  private audioSubject: Subject<void> = new Subject();
 
   get playTime(): number {
     if (this.audio && this.audio.currentTime && this.audio.duration) {
@@ -165,7 +166,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
 
     this._stateService.userProfile$
-      .pipe(takeUntil(this.unsubscribe))
+      .pipe(takeUntil(this.destroySubject))
       .subscribe((userProfile: SpotifyApi.CurrentUsersProfileResponse) => {
         this.userProfile = userProfile;
         this.cdr.detectChanges();
@@ -235,12 +236,9 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.audio) {
-      this.audio.pause();
-      this.audio = undefined;
-    }
-    this.unsubscribe.next();
-    this.unsubscribe.complete();
+    this.stopTrack();
+    this.destroySubject.next();
+    this.destroySubject.complete();
   }
 
   createDataSource(): void {
@@ -333,21 +331,38 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     // something is playing
     if (this.audio) {
       if (this.isPlaying(track)) {
-        this.audio.pause();
-        this.audio = undefined;
+        // stop track
+        this.stopTrack();
         return;
       } else {
-        this.audio.pause();
-        this.audio = undefined;
+        // stop track and play new track
+        this.stopTrack();
       }
     }
     if (track) {
       this.audio = new Audio(this.getPreviewUrl(track));
-      // TODO: unsubscribe from this properly
-      fromEvent(this.audio, 'ended').subscribe(() => {
-        this.audio = undefined;
-      });
+      this.audioSubject = new Subject();
+      interval(500)
+        .pipe(takeUntil(this.audioSubject))
+        .subscribe(() => this.cdr.detectChanges());
+      fromEvent(this.audio, 'ended')
+        .pipe(takeUntil(this.audioSubject))
+        .subscribe(() => {
+          this.stopTrack();
+          this.cdr.detectChanges();
+        });
       await this.audio.play();
+    }
+    this.cdr.detectChanges();
+  }
+
+  stopTrack(): void {
+    if (this.audio) {
+      this.audio.pause();
+      this.audio = undefined;
+      this.audioSubject.next();
+      this.audioSubject.complete();
+      this.audioSubject = undefined;
     }
   }
   isPlaying(track: ITrackWFeatures): boolean {
