@@ -1,3 +1,23 @@
+// const topPlaylists: SpotifyApi.PlaylistTrackResponse[] = await this.spotifyWebApiService.getTopSongsPlaylists();
+
+// const topPlaylistsArtists: Dictionary<
+//   SpotifyApi.PlaylistTrackObject[]
+// >[] = topPlaylists.map((playlist: SpotifyApi.PlaylistTrackResponse) =>
+//   groupBy(playlist.items, (item: SpotifyApi.PlaylistTrackObject) => item.track.artists[0].id),
+// );
+// console.log(topPlaylistsArtists);
+// const sorted: string[][] = topPlaylistsArtists.map(
+//   (playlistArtists: Dictionary<SpotifyApi.PlaylistTrackObject[]>, index: number) =>
+//     Object.keys(playlistArtists).sort(
+//       (artistA: string, artistB: string) =>
+//         topPlaylistsArtists[index][artistB].length - topPlaylistsArtists[index][artistA].length,
+//     ),
+// );
+// const map: any = sorted.map((artists: string[], index: number) =>
+//   artists.map((artist: string) => [artist, topPlaylistsArtists[index][artist].length]),
+// );
+// console.log(map);
+
 // export const ARTIST_PAIR_JOINER = '<!_!>';
 
 // export function randomColor(): string {
@@ -240,3 +260,168 @@
 
 //   uri: string;
 // }
+
+// interface IId {
+//   id: string;
+// }
+// interface IEnergy extends IId {
+//   energy: number;
+// }
+// interface IName extends IId {
+//   name: string;
+// }
+// interface IArtist extends IId {
+//   artist: string;
+// }
+// interface IAlbumName extends IId {
+//   album_name: string;
+// }
+// interface IAddedDate extends IId {
+//   added_at: string;
+// }
+// interface IReleaseDate extends IId {
+//   release_date: string;
+// }
+// interface IDuration extends IId {
+//   duration_ms: number;
+// }
+// interface IAcousticness extends IId {
+//   acousticness: number;
+// }
+// interface IDanceability extends IId {
+//   danceability: number;
+// }
+// interface IInstrumentalness extends IId {
+//   instrumentalness: number;
+// }
+// interface IKey extends IId {
+//   key: number;
+// }
+// interface ILiveness extends IId {
+//   liveness: number;
+// }
+// interface ILoudness extends IId {
+//   loudness: number;
+// }
+// interface IMode extends IId {
+//   mode: number;
+// }
+// interface ISpeechiness extends IId {
+//   speechiness: number;
+// }
+// interface ITempo extends IId {
+//   tempo: number;
+// }
+// interface ITimeSignature extends IId {
+//   time_signature: number;
+// }
+// interface IValence extends IId {
+//   valence: number;
+// }
+// // const groupByAlbum: Dictionary<ITrackWFeatures[]> = groupBy(this.initialTracks, (item: ITrackWFeatures) => item.track.album.name);
+// // const groupByArtist: Dictionary<ITrackWFeatures[]> = groupBy(this.initialTracks, (item: ITrackWFeatures) => item.track.artists[0].name);
+// // const wut: object = Object.keys(groupByArtist).reduce((acc: object, artist: string) => {
+// //   const tracks: ITrackWFeatures[] = groupByArtist[artist];
+// //   const tracksGroupedByAlbum: Dictionary<ITrackWFeatures[]> = groupBy(tracks, (item: ITrackWFeatures) => item.track.album.name);
+// //   return {
+// //     ...acc,
+// //     [artist]: tracksGroupedByAlbum,
+// //   };
+// // }, {});
+// // console.log(groupByAlbum);
+// // console.log(groupByArtist);
+// // console.log(wut);
+// // return;
+// const all: any[] = this.sortBy.value.map((sortBy: string) => {
+//   switch (sortBy) {
+//     case ESortableColumns.name:
+//       return this.initialTracks
+//         .map(({ id, track }) => ({ id, name: track.name }))
+//         .sort((a: IName, b: IName) => b.name.localeCompare(a.name));
+//     case 'artist':
+//       return this.initialTracks
+//         .map(({ id, track }) => ({ id, artist: track.artists[0].name }))
+//         .sort((a: IArtist, b: IArtist) => b.artist.localeCompare(a.artist));
+//     case 'album_name':
+//       return this.initialTracks
+//         .map(({ id, track }) => ({ id, album_name: track.album.name }))
+//         .sort((a: IAlbumName, b: IAlbumName) => b.album_name.localeCompare(a.album_name));
+//     case 'added_at':
+//       return this.initialTracks
+//         .map(({ id, added_at }) => ({ id, added_at }))
+//         .sort((a: IAddedDate, b: IAddedDate) => new Date(b.added_at).getTime() - new Date(a.added_at).getTime());
+//     case 'release_date':
+//       return this.initialTracks
+//         .map(({ id, track }) => ({ id, release_date: (<any>track.album).release_date }))
+//         .sort(
+//           (a: IReleaseDate, b: IReleaseDate) =>
+//             new Date(b.release_date).getTime() - new Date(a.release_date).getTime(),
+//         );
+//     case 'duration_ms':
+//       return this.initialTracks
+//         .map(({ id, duration_ms }) => ({ id, duration_ms }))
+//         .sort((a: IDuration, b: IDuration) => b.duration_ms - a.duration_ms);
+//     case 'acousticness':
+//       return this.initialTracks
+//         .map(({ id, acousticness }) => ({ id, acousticness }))
+//         .sort((a: IAcousticness, b: IAcousticness) => b.acousticness - a.acousticness);
+//     case 'danceability':
+//       return this.initialTracks
+//         .map(({ id, danceability }) => ({ id, danceability }))
+//         .sort((a: IDanceability, b: IDanceability) => b.danceability - a.danceability);
+//     case 'energy':
+//       return this.initialTracks
+//         .map(({ id, energy }) => ({ id, energy }))
+//         .sort((a: IEnergy, b: IEnergy) => b.energy - a.energy);
+//     case 'instrumentalness':
+//       return this.initialTracks
+//         .map(({ id, instrumentalness }) => ({ id, instrumentalness }))
+//         .sort((a: IInstrumentalness, b: IInstrumentalness) => b.instrumentalness - a.instrumentalness);
+//     case 'key':
+//       return this.initialTracks.map(({ id, key }) => ({ id, key })).sort((a: IKey, b: IKey) => b.key - a.key);
+//     case 'liveness':
+//       return this.initialTracks
+//         .map(({ id, liveness }) => ({ id, liveness }))
+//         .sort((a: ILiveness, b: ILiveness) => b.liveness - a.liveness);
+//     case 'loudness':
+//       return this.initialTracks
+//         .map(({ id, loudness }) => ({ id, loudness }))
+//         .sort((a: ILoudness, b: ILoudness) => b.loudness - a.loudness);
+//     case 'mode':
+//       return this.initialTracks.map(({ id, mode }) => ({ id, mode })).sort((a: IMode, b: IMode) => b.mode - a.mode);
+//     case 'speechiness':
+//       return this.initialTracks
+//         .map(({ id, speechiness }) => ({ id, speechiness }))
+//         .sort((a: ISpeechiness, b: ISpeechiness) => b.speechiness - a.speechiness);
+//     case 'tempo':
+//       return this.initialTracks
+//         .map(({ id, tempo }) => ({ id, tempo }))
+//         .sort((a: ITempo, b: ITempo) => b.tempo - a.tempo);
+//     case 'time_signature':
+//       return this.initialTracks
+//         .map(({ id, time_signature }) => ({ id, time_signature }))
+//         .sort((a: ITimeSignature, b: ITimeSignature) => b.time_signature - a.time_signature);
+//     case 'valence':
+//       return this.initialTracks
+//         .map(({ id, valence }) => ({ id, valence }))
+//         .sort((a: IValence, b: IValence) => b.valence - a.valence);
+//   }
+// });
+// interface ITotal {
+//   id: string;
+//   total: number;
+// }
+// const final: ITotal[] = this.initialTracks
+//   .map((track: ITrackWFeatures) => {
+//     const total: number = all.reduce((acc: number, curr: any[], index: number) => {
+//       const val: number = curr.findIndex(({ id }) => id === track.id);
+//       return acc + val;
+//     }, 0);
+//     return {
+//       id: track.id,
+//       total,
+//     };
+//   })
+//   .sort((a: ITotal, b: ITotal) => b.total - a.total);
+// this.tracks = final.map((track: ITotal) => this.initialTracks.find(({ id }: ITrackWFeatures) => id === track.id));
+// this.createDataSource();

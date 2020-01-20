@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { StateService } from '../services/state.service';
 
@@ -6,6 +6,7 @@ import { StateService } from '../services/state.service';
   selector: 'spotify-auth',
   templateUrl: './authorized.component.html',
   styleUrls: ['./authorized.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthorizedComponent implements OnInit {
   public constructor(

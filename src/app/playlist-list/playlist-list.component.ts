@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { SpotifyWebApiService } from '../services/spotify-web-api.service';
 import { getAlbumCover } from '../shared';
 import { StateService } from '../services/state.service';
@@ -7,9 +7,14 @@ import { StateService } from '../services/state.service';
   selector: 'sort-playlist-list',
   templateUrl: './playlist-list.component.html',
   styleUrls: ['./playlist-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlaylistListComponent implements OnInit {
-  constructor(private spotifyWebApiService: SpotifyWebApiService, private _stateService: StateService) {}
+  constructor(
+    private spotifyWebApiService: SpotifyWebApiService,
+    private _stateService: StateService,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   playlists: SpotifyApi.PlaylistObjectSimplified[] = [];
   playlistFilter = '';
@@ -21,6 +26,7 @@ export class PlaylistListComponent implements OnInit {
     } catch (error) {
       this._stateService.setError('Unable to load playlists', error);
     }
+    this.cdr.detectChanges();
     this._stateService.setLoading(false);
   }
   get filteredPlaylists(): SpotifyApi.PlaylistObjectSimplified[] {

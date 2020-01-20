@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { filter } from 'rxjs/operators';
 import { TokenService } from './spotify-auth';
 import { StateService } from './services/state.service';
 
@@ -16,13 +15,14 @@ const USER_SVG = `
   selector: 'sort-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
   fallbackUserImage: SafeResourceUrl;
   constructor(
     private router: Router,
     private tokenSvc: TokenService,
-    private _stateService: StateService,
+    public _stateService: StateService,
     private _sanitizer: DomSanitizer,
   ) {
     this.fallbackUserImage = this._sanitizer.bypassSecurityTrustResourceUrl(
@@ -37,10 +37,6 @@ export class AppComponent {
 
   get username(): string {
     return this._stateService.userProfile && this._stateService.userProfile.display_name;
-  }
-
-  get loading(): boolean {
-    return this._stateService.loading;
   }
 
   get loggedIn(): boolean {

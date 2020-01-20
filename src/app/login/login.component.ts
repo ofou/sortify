@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { generateLoginUrl } from '../shared';
 import { TokenService } from '../spotify-auth';
@@ -7,6 +7,7 @@ import { TokenService } from '../spotify-auth';
   selector: 'sort-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent implements OnInit {
   constructor(private tokenSvc: TokenService, private router: Router) {}

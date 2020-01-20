@@ -34,11 +34,11 @@ export class StateService {
     this.userProfile = undefined;
   }
 
-  get loading(): boolean {
+  private get loading(): boolean {
     return this.loadingSubject.getValue();
   }
 
-  set loading(loading: boolean) {
+  private set loading(loading: boolean) {
     setTimeout(() => {
       this.loadingSubject.next(loading);
     });

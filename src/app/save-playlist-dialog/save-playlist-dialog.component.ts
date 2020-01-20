@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -23,6 +23,7 @@ enum EWriteMode {
   selector: 'sort-save-playlist-dialog',
   templateUrl: './save-playlist-dialog.component.html',
   styleUrls: ['./save-playlist-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SavePlaylistDialogComponent implements OnInit {
   playlistNameFC = new FormControl('', [Validators.required]);
@@ -33,7 +34,7 @@ export class SavePlaylistDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: ISavePlaylistDialogData,
     private spotifyWebApiService: SpotifyWebApiService,
     private matSnackBar: MatSnackBar,
-    private _stateService: StateService,
+    public _stateService: StateService,
     private router: Router,
   ) {}
 
@@ -58,10 +59,6 @@ export class SavePlaylistDialogComponent implements OnInit {
       return 'The playlist can be overwritten or a new playlist can be created';
     }
     return 'A new playlist will be created since you are not the owner of this playlist';
-  }
-
-  get loading(): boolean {
-    return this._stateService.loading;
   }
 
   writeModeDescription(writeMode: EWriteMode): string {

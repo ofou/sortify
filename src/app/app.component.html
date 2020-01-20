@@ -29,6 +29,6 @@
   <sort-footer></sort-footer>
 </div>
 
-<div *ngIf="loading" class="loading-overlay">
+<div *ngIf="_stateService.loading$ | async" class="loading-overlay">
   <mat-progress-spinner color="accent" mode="indeterminate"></mat-progress-spinner>
 </div>

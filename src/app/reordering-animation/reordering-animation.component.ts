@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { shuffle } from 'lodash-es';
 
 const NUMBER_OF_DEMO_ITEMS = 10;
@@ -11,8 +11,10 @@ interface IReorderItem {
   selector: 'sort-reordering-animation',
   templateUrl: './reordering-animation.component.html',
   styleUrls: ['./reordering-animation.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReorderingAnimationComponent implements OnInit {
+  constructor(private cdr: ChangeDetectorRef) {}
   reorderingItems: IReorderItem[] = Array.from(Array(NUMBER_OF_DEMO_ITEMS).keys()).map((index: number) => ({ index }));
 
   ngOnInit() {
@@ -21,6 +23,7 @@ export class ReorderingAnimationComponent implements OnInit {
       this.reorderingItems.forEach((item: IReorderItem, index: number) => {
         item.index = order[index];
       });
+      this.cdr.detectChanges();
     }, 2000);
   }
 

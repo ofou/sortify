@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -14,6 +14,7 @@ export interface IDeletePlaylistDialogData {
   selector: 'sort-delete-playlist-dialog',
   templateUrl: './delete-playlist-dialog.component.html',
   styleUrls: ['./delete-playlist-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeletePlaylistDialogComponent {
   constructor(
@@ -21,7 +22,7 @@ export class DeletePlaylistDialogComponent {
     @Inject(MAT_DIALOG_DATA) private data: IDeletePlaylistDialogData,
     private spotifyWebApiService: SpotifyWebApiService,
     private matSnackBar: MatSnackBar,
-    private _stateService: StateService,
+    public _stateService: StateService,
     private router: Router,
   ) {}
 
@@ -37,9 +38,5 @@ export class DeletePlaylistDialogComponent {
     this.dialogRef.close(true);
     this._stateService.setLoading(false);
     this.matSnackBar.open('Deleted playlist');
-  }
-
-  get loading(): boolean {
-    return this._stateService.loading;
   }
 }
