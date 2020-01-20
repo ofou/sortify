@@ -1,7 +1,7 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { SpotifyWebApiService } from '../services/spotify-web-api.service';
-import { getAlbumCover } from '../shared';
 import { StateService } from '../services/state.service';
+import { getAlbumCover } from '../shared';
 
 @Component({
   selector: 'sort-playlist-list',

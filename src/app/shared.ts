@@ -1,4 +1,4 @@
-import { AuthConfig, buildAuthUrl } from './spotify-auth/auth.utilities';
+import { IAuthConfig, buildAuthUrl } from './spotify-auth/auth.utilities';
 
 const FALLBACK_IMG = 'https://developer.spotify.com/assets/branding-guidelines/icon3@2x.png';
 const AUTHORIZED_ROUTE = 'authorized';
@@ -14,7 +14,7 @@ export function getAlbumCover(playlist: SpotifyApi.PlaylistObjectSimplified, big
 export function generateLoginUrl(state: string): string {
   const redirectUri: URL = new URL(window.location.origin);
   redirectUri.pathname = `/${AUTHORIZED_ROUTE}`;
-  const ac: AuthConfig = {
+  const ac: IAuthConfig = {
     client_id: CLIENT_ID,
     response_type: 'token',
     redirect_uri: redirectUri.href,

@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthorizedComponent } from './authorized/authorized.component';
 import { LoginComponent } from './login/login.component';
 import { PlaylistListComponent } from './playlist-list/playlist-list.component';
 import { PlaylistComponent } from './playlist/playlist.component';
 import { AuthGuard } from './spotify-auth';
-import { AuthorizedComponent } from './authorized/authorized.component';
 
 const routes: Routes = [
   {

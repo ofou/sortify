@@ -1,10 +1,11 @@
-import { Component, OnDestroy, OnInit, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { shuffle } from 'lodash-es';
-import { fromEvent, Subject, interval } from 'rxjs';
+import { fromEvent, interval, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import {
   DeletePlaylistDialogComponent,
   IDeletePlaylistDialogData,
@@ -14,9 +15,8 @@ import {
   SavePlaylistDialogComponent,
 } from '../save-playlist-dialog/save-playlist-dialog.component';
 import { ITrackWFeatures, SpotifyWebApiService } from '../services/spotify-web-api.service';
-import { getAlbumCover } from '../shared';
 import { StateService } from '../services/state.service';
-import { takeUntil } from 'rxjs/operators';
+import { getAlbumCover } from '../shared';
 
 enum ENonSortableColumns {
   'index' = 'index',

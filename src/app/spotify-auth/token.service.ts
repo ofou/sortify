@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 
 const TOKEN_KEY = 'SORTIFY_AUTH_TOKEN';
 
-export interface SpotifyAuthResponse {
+export interface ISpotifyAuthResponse {
   access_token: string;
   expires_in: number;
   state: string;
@@ -44,7 +44,7 @@ export class TokenService {
     return this.token$.asObservable();
   }
 
-  public setAuthToken(spotifyResponse: SpotifyAuthResponse): boolean {
+  public setAuthToken(spotifyResponse: ISpotifyAuthResponse): boolean {
     if (!!spotifyResponse && !!spotifyResponse.access_token) {
       setToken(spotifyResponse.access_token);
     } else {

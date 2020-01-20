@@ -1,8 +1,8 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { TokenService } from './spotify-auth';
 import { StateService } from './services/state.service';
+import { TokenService } from './spotify-auth';
 
 const USER_SVG = `
 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">

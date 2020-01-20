@@ -1,4 +1,4 @@
-export interface AuthConfig {
+export interface IAuthConfig {
   client_id: string;
   response_type: 'token' | string;
   redirect_uri: string;
@@ -34,7 +34,7 @@ export type SpotifyScope =
 
 const requestAuthUrl = 'https://accounts.spotify.com/authorize';
 
-export function buildAuthUrl(config: AuthConfig): string {
+export function buildAuthUrl(config: IAuthConfig): string {
   let params = [];
   for (const [key, value] of Object.entries(config)) {
     let param: string;
