@@ -18,11 +18,11 @@ export class StateService {
   private readonly loadingSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   readonly loading$: Observable<boolean> = this.loadingSubject.asObservable();
 
-  get userProfile(): SpotifyApi.CurrentUsersProfileResponse {
+  private get userProfile(): SpotifyApi.CurrentUsersProfileResponse {
     return this.userProfileSubject.getValue();
   }
 
-  set userProfile(userProfile: SpotifyApi.CurrentUsersProfileResponse) {
+  private set userProfile(userProfile: SpotifyApi.CurrentUsersProfileResponse) {
     this.userProfileSubject.next(userProfile);
   }
 

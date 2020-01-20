@@ -123,6 +123,10 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   sortActive = '';
   sortDirection: MatSortDirectionType = EDirection.asc;
 
+  private userProfile: SpotifyApi.CurrentUsersProfileResponse;
+
+  private unsubscribe: Subject<void> = new Subject();
+
   get playTime(): number {
     if (this.audio && this.audio.currentTime && this.audio.duration) {
       return (this.audio.currentTime / this.audio.duration) * 100;
@@ -153,16 +157,22 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   }
 
   get ownsPlaylist(): boolean {
-    return this.playlist && this.playlist.owner.id === this._stateService.userProfile.id;
+    return this.playlist && this.playlist.owner.id === this.userProfile.id;
   }
 
   async ngOnInit() {
     this._stateService.setLoading(true);
     this.cdr.detectChanges();
 
+    this._stateService.userProfile$
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((userProfile: SpotifyApi.CurrentUsersProfileResponse) => {
+        this.userProfile = userProfile;
+        this.cdr.detectChanges();
+      });
+
     this.route.paramMap.subscribe(async (params: ParamMap) => {
       this.playlistId = params.get('playlistId');
-
       try {
         this.playlist = await this.spotifyWebApiService.getPlaylist(this.playlistId);
       } catch {
@@ -173,42 +183,47 @@ export class PlaylistComponent implements OnInit, OnDestroy {
       this.tracks = tracks;
       this.initialTracks = this.tracks;
       this.createDataSource();
+
       this._stateService.setLoading(false);
       this.cdr.detectChanges();
 
-      this.route.queryParamMap.subscribe(async (queryParams: ParamMap) => {
-        const active: string = queryParams.get('active');
-        const direction: string = queryParams.get('direction');
-        if (
-          active &&
-          direction &&
-          Object.keys(ESortableColumns).includes(active) &&
-          Object.keys(EDirection).includes(direction)
-        ) {
-          this.sortActive = active;
-          this.sortDirection = <MatSortDirectionType>direction;
+      this.handleQueryParams();
+    });
+  }
 
-          if (!(this.sortActive === this.matSort.active && this.sortDirection === this.matSort.direction)) {
-            this.matSort.sort({
-              id: this.sortActive,
-              start: undefined,
-              disableClear: false,
-            });
-            this.createDataSource();
-          }
-        } else {
-          this.sortActive = '';
-          this.sortDirection = EDirection.asc;
-          // reset
+  handleQueryParams(): void {
+    this.route.queryParamMap.subscribe(async (queryParams: ParamMap) => {
+      const active: string = queryParams.get('active');
+      const direction: string = queryParams.get('direction');
+      if (
+        active &&
+        direction &&
+        Object.keys(ESortableColumns).includes(active) &&
+        Object.keys(EDirection).includes(direction)
+      ) {
+        this.sortActive = active;
+        this.sortDirection = <MatSortDirectionType>direction;
+
+        if (!(this.sortActive === this.matSort.active && this.sortDirection === this.matSort.direction)) {
           this.matSort.sort({
             id: this.sortActive,
             start: undefined,
             disableClear: false,
           });
           this.createDataSource();
-          await this.resetQueryParams();
         }
-      });
+      } else {
+        this.sortActive = '';
+        this.sortDirection = EDirection.asc;
+        // reset
+        this.matSort.sort({
+          id: this.sortActive,
+          start: undefined,
+          disableClear: false,
+        });
+        this.createDataSource();
+        await this.resetQueryParams();
+      }
     });
   }
 
@@ -224,6 +239,8 @@ export class PlaylistComponent implements OnInit, OnDestroy {
       this.audio.pause();
       this.audio = undefined;
     }
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   createDataSource(): void {

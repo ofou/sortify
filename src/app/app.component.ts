@@ -34,20 +34,4 @@ export class AppComponent {
     this.tokenSvc.clearToken();
     await this.router.navigate(['login']);
   }
-
-  get username(): string {
-    return this._stateService.userProfile && this._stateService.userProfile.display_name;
-  }
-
-  get loggedIn(): boolean {
-    return !!this._stateService.userProfile;
-  }
-
-  get userImage(): string | SafeResourceUrl {
-    return (
-      (this._stateService.userProfile.images &&
-        this._stateService.userProfile.images[this._stateService.userProfile.images.length - 1].url) ||
-      this.fallbackUserImage
-    );
-  }
 }

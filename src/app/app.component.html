@@ -2,17 +2,19 @@
   <a mat-button routerLink="/" class="logo">Sortify</a>
 
   <span class="flex-1"></span>
-  <ng-container *ngIf="loggedIn">
+  <ng-container *ngIf="_stateService.userProfile$ | async as userProfile">
     <button mat-icon-button [matMenuTriggerFor]="menu">
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
       <div class="user-details" (click)="$event.stopPropagation()">
-        <img [src]="userImage" />
+        <img
+          [src]="(userProfile.images && userProfile.images[userProfile.images.length - 1].url) || fallbackUserImage"
+        />
         <div>
           <div class="mat-caption">Logged in as</div>
           <div>
-            {{ username }}
+            {{ userProfile.display_name }}
           </div>
         </div>
       </div>
