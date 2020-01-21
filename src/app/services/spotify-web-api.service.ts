@@ -72,7 +72,8 @@ export class SpotifyWebApiService {
       limit: MAX_LIMIT,
     });
     const remaining: number = tracksResponse.total - MAX_LIMIT;
-    const numNecessaryCalls: number = Math.ceil(remaining / MAX_LIMIT);
+    // handle empty playlists
+    const numNecessaryCalls: number = Math.max(0, Math.ceil(remaining / MAX_LIMIT));
     const necessaryCalls: Promise<SpotifyApi.PlaylistTrackResponse>[] = Array.from(Array(numNecessaryCalls).keys()).map(
       (index: number) => {
         return spotifyApi.getPlaylistTracks(playlistId, { offset: (index + 1) * MAX_LIMIT, limit: MAX_LIMIT });

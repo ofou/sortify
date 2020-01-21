@@ -21,7 +21,7 @@ mat-toolbar {
 
 .wrapper {
   position: absolute;
-  top: 64px;
+  top: 4em;
   right: 0;
   left: 0;
   bottom: 0;
@@ -57,11 +57,11 @@ mat-progress-spinner {
 .user-details {
   display: flex;
   align-items: center;
-  padding: 16px;
+  padding: 1em;
 
   img {
-    width: 24px;
-    height: 24px;
-    margin-right: 16px;
+    width: 1.5em;
+    height: 1.5em;
+    margin-right: 1em;
   }
 }

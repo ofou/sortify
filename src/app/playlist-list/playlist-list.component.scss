@@ -1,10 +1,3 @@
-.background-image {
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  height: calc(100% - 35px);
-}
-
 mat-card-title,
 mat-card-subtitle {
   white-space: nowrap;
@@ -22,12 +15,17 @@ mat-card {
   height: 100%;
 }
 
-mat-form-field {
-  width: 100%;
-}
-
 p {
   mat-icon {
     vertical-align: text-bottom;
   }
+}
+
+.select {
+  width: 7em;
+  margin-right: 2em;
+}
+
+.filters {
+  display: flex;
 }

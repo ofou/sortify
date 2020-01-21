@@ -3,6 +3,11 @@ import { SpotifyWebApiService } from '../services/spotify-web-api.service';
 import { StateService } from '../services/state.service';
 import { getAlbumCover } from '../shared';
 
+enum EOwner {
+  'all' = 'all',
+  'owner' = 'owner',
+  'non_owner' = 'non_owner',
+}
 @Component({
   selector: 'sort-playlist-list',
   templateUrl: './playlist-list.component.html',
@@ -17,9 +22,15 @@ export class PlaylistListComponent implements OnInit {
   ) {}
 
   playlists: SpotifyApi.PlaylistObjectSimplified[] = [];
-  playlistFilter = '';
-
+  searchFilter = '';
+  ownerFilter: EOwner = EOwner.all;
+  EOwner: typeof EOwner = EOwner;
+  private userProfile: SpotifyApi.CurrentUsersProfileResponse;
   async ngOnInit(): Promise<void> {
+    this._stateService.userProfile$.subscribe((userProfile: SpotifyApi.CurrentUsersProfileResponse) => {
+      this.userProfile = userProfile;
+    });
+
     this._stateService.setLoading(true);
     try {
       this.playlists = (await this.spotifyWebApiService.getPlaylists()).items;
@@ -31,10 +42,18 @@ export class PlaylistListComponent implements OnInit {
   }
   get filteredPlaylists(): SpotifyApi.PlaylistObjectSimplified[] {
     return this.playlists.filter((playlist) => {
-      if (this.playlistFilter) {
-        return playlist.name.toLowerCase().indexOf(this.playlistFilter.toLowerCase()) > -1;
+      let matchesSearchFilter = true;
+      let matchesOwnerFilter = true;
+      if (this.searchFilter) {
+        matchesSearchFilter = playlist.name.toLowerCase().indexOf(this.searchFilter.toLowerCase()) > -1;
       }
-      return true;
+      if (this.ownerFilter === EOwner.owner) {
+        matchesOwnerFilter = playlist.owner.id === this.userProfile.id;
+      }
+      if (this.ownerFilter === EOwner.non_owner) {
+        matchesOwnerFilter = playlist.owner.id !== this.userProfile.id;
+      }
+      return matchesSearchFilter && matchesOwnerFilter;
     });
   }
 

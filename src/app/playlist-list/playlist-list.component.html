@@ -1,18 +1,27 @@
 <h1>Playlists</h1>
-<mat-form-field>
-  <input matInput type="text" placeholder="Filter" [(ngModel)]="playlistFilter" />
-  <button
-    mat-icon-button
-    *ngIf="playlistFilter"
-    matSuffix
-    aria-label="Clear"
-    (click)="playlistFilter = ''"
-    matTooltip="Clear"
-  >
-    <mat-icon>close</mat-icon>
-  </button>
-</mat-form-field>
-
+<div class="filters">
+  <mat-form-field class="select">
+    <mat-label>Owned by</mat-label>
+    <mat-select [(value)]="ownerFilter">
+      <mat-option [value]="EOwner.all">Anybody</mat-option>
+      <mat-option [value]="EOwner.owner">Self</mat-option>
+      <mat-option [value]="EOwner.non_owner">Others</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="flex-1">
+    <input matInput type="text" placeholder="Filter" [(ngModel)]="searchFilter" />
+    <button
+      mat-icon-button
+      *ngIf="searchFilter"
+      matSuffix
+      aria-label="Clear"
+      (click)="searchFilter = ''"
+      matTooltip="Clear"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+</div>
 <mat-action-list>
   <a mat-list-item [routerLink]="['playlist', playlist.id]" *ngFor="let playlist of filteredPlaylists">
     <img matListAvatar [src]="getAlbumCover(playlist)" />
@@ -20,7 +29,7 @@
   </a>
 </mat-action-list>
 
-<p *ngIf="playlistFilter && filteredPlaylists.length === 0">
+<p *ngIf="(searchFilter || ownerFilter !== EOwner.all) && filteredPlaylists.length === 0">
   <mat-icon>sentiment_very_dissatisfied</mat-icon>
-  No playlists match the filter.
+  No playlists match the filters.
 </p>
