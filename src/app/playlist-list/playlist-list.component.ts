@@ -35,6 +35,7 @@ export class PlaylistListComponent implements OnInit {
     try {
       this.playlists = (await this.spotifyWebApiService.getPlaylists()).items;
     } catch (error) {
+      // TODO: use this error handler everywhere
       this._stateService.setError('Unable to load playlists', error);
     }
     this.cdr.detectChanges();

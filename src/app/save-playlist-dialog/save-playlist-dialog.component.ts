@@ -28,6 +28,7 @@ enum EWriteMode {
 export class SavePlaylistDialogComponent implements OnInit {
   playlistNameFC = new FormControl('', [Validators.required]);
   writeMode: keyof typeof EWriteMode = this.data.ownsPlaylist ? EWriteMode.overWrite : EWriteMode.createNew;
+  error: boolean = false;
 
   constructor(
     private dialogRef: MatDialogRef<SavePlaylistDialogComponent>,
@@ -69,16 +70,32 @@ export class SavePlaylistDialogComponent implements OnInit {
         return 'Create a new playlist';
     }
   }
-  async save(): Promise<void> {
+
+  async createNewPlaylist(): Promise<void> {
+    this.error = false;
     this._stateService.setLoading(true);
-    if (this.createNew) {
+
+    try {
       const { id }: SpotifyApi.CreatePlaylistResponse = await this.spotifyWebApiService.createPlaylist(
         this.playlistNameFC.value,
         this.data.tracks,
       );
       await this.spotifyWebApiService.updatePlaylistDetails(id, { description: this.data.playlistDescription });
       await this.router.navigate(['playlist', id]);
-    } else {
+      this.dialogRef.close(true);
+      this.matSnackBar.open('New playlist created!');
+    } catch {
+      this.error = true;
+    } finally {
+      this._stateService.setLoading(false);
+    }
+  }
+
+  async overwritePlaylist(): Promise<void> {
+    this.error = false;
+    this._stateService.setLoading(true);
+
+    try {
       await Promise.all([
         this.spotifyWebApiService.updatePlaylist(this.data.playlistId, this.data.tracks),
         this.spotifyWebApiService.updatePlaylistDetails(this.data.playlistId, {
@@ -86,11 +103,17 @@ export class SavePlaylistDialogComponent implements OnInit {
           description: this.data.playlistDescription,
         }),
       ]);
+
+      this.dialogRef.close(true);
+      this._stateService.setLoading(false);
+      this.matSnackBar.open('Playlist saved!');
+    } catch {
+      this.error = true;
+    } finally {
+      this._stateService.setLoading(false);
     }
-    this.dialogRef.close(true);
-    this._stateService.setLoading(false);
-    this.matSnackBar.open('Saved!');
   }
+
   cancel(): void {
     this.dialogRef.close(false);
   }
