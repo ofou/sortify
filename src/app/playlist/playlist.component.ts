@@ -144,7 +144,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
       action: this.update.bind(this),
       description: 'Update',
       icon: 'update',
-      display: () => this.ownsPlaylist,
+      display: () => this.canUpdatePlaylist,
     },
     {
       action: this.delete.bind(this),
@@ -182,6 +182,10 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   private destroySubject: Subject<void> = new Subject();
   private audioSubject: Subject<void> = new Subject();
 
+  get canUpdatePlaylist(): boolean {
+    const test: RegExpExecArray = DESCRIPTION_REGEX.exec(this.playlist.description);
+    return !!(test && test[1]);
+  }
   get playTime(): number {
     if (this.audio && this.audio.currentTime && this.audio.duration) {
       return (this.audio.currentTime / this.audio.duration) * 100;
@@ -230,19 +234,19 @@ export class PlaylistComponent implements OnInit, OnDestroy {
       this.playlistId = params.get('playlistId');
       try {
         this.playlist = await this.spotifyWebApiService.getPlaylist(this.playlistId);
-      } catch {
+        const tracks = await this.spotifyWebApiService.getPlaylistTracksWithFeatures(this.playlistId);
+        this.tracks = tracks;
+        this.initialTracks = this.tracks;
+        this.createDataSource();
+
+        this._stateService.setLoading(false);
+        this.cdr.detectChanges();
+
+        this.handleQueryParams();
+      } catch (error) {
         await this.router.navigate(['/']);
-        return;
+        this._stateService.setError('Failed to load playlist', error);
       }
-      const tracks = await this.spotifyWebApiService.getPlaylistTracksWithFeatures(this.playlistId);
-      this.tracks = tracks;
-      this.initialTracks = this.tracks;
-      this.createDataSource();
-
-      this._stateService.setLoading(false);
-      this.cdr.detectChanges();
-
-      this.handleQueryParams();
     });
   }
 
@@ -313,22 +317,16 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     const test: RegExpExecArray = DESCRIPTION_REGEX.exec(this.playlist.description);
     if (test && test[1]) {
       const [active, direction, originalPlaylistId]: string[] = test[1].split(SEPARATOR);
-      const tracks = await this.spotifyWebApiService.getPlaylistTracksWithFeatures(originalPlaylistId);
-      this.tracks = tracks;
-
-      this.sortActive = active;
-      this.sortDirection = <MatSortDirectionType>direction;
-      this.createDataSource();
-    }
-  }
-  async extractSortingData(): Promise<void> {
-    const test: RegExpExecArray = DESCRIPTION_REGEX.exec(this.playlist.description);
-    if (test && test[1]) {
-      const [active, direction]: string[] = test[1].split(SEPARATOR);
-      await this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams: active && direction ? { active, direction } : undefined,
-      });
+      try {
+        this.tracks = await this.spotifyWebApiService.getPlaylistTracksWithFeatures(originalPlaylistId);
+        this._stateService.setSuccess('Playlist updated!');
+        await this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: active && direction ? { active, direction } : undefined,
+        });
+      } catch (error) {
+        this._stateService.setError('Failed to update. Try again.', error);
+      }
     }
   }
 

@@ -52,4 +52,8 @@ export class StateService {
     this.matSnackBar.open(`${errorSummary} :(`);
     console.error(errorObject);
   }
+
+  setSuccess(message: string): void {
+    this.matSnackBar.open(message);
+  }
 }

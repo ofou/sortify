@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { SpotifyWebApiService } from '../services/spotify-web-api.service';
 import { StateService } from '../services/state.service';
@@ -43,7 +42,6 @@ export class SavePlaylistDialogComponent implements OnInit {
     private dialogRef: MatDialogRef<SavePlaylistDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ISavePlaylistDialogData,
     private spotifyWebApiService: SpotifyWebApiService,
-    private matSnackBar: MatSnackBar,
     public _stateService: StateService,
     private router: Router,
   ) {}
@@ -96,12 +94,12 @@ export class SavePlaylistDialogComponent implements OnInit {
 
       await this.router.navigate(['playlist', id]);
       this.dialogRef.close();
-      this.matSnackBar.open('New playlist created!');
-    } catch {
+      this._stateService.setSuccess('New playlist created!');
+    } catch (error) {
       this.error = true;
-    } finally {
-      this._stateService.setLoading(false);
+      this._stateService.setError('Failed to create new playlist', error);
     }
+    this._stateService.setLoading(false);
   }
 
   async overwritePlaylist(): Promise<void> {
@@ -123,12 +121,12 @@ export class SavePlaylistDialogComponent implements OnInit {
       ]);
 
       this.dialogRef.close(updatedDetails);
-      this.matSnackBar.open('Playlist saved!');
-    } catch {
+      this._stateService.setSuccess('Playlist saved!');
+    } catch (error) {
       this.error = true;
-    } finally {
-      this._stateService.setLoading(false);
+      this._stateService.setError('Failed to save playlist', error);
     }
+    this._stateService.setLoading(false);
   }
 
   cancel(): void {

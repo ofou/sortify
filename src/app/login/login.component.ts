@@ -13,6 +13,7 @@ export class LoginComponent implements OnInit {
   constructor(private tokenSvc: TokenService, private router: Router) {}
 
   async ngOnInit(): Promise<void> {
+    // TODO: move this logic out of here
     if (!!this.tokenSvc.oAuthToken) {
       await this.router.navigate(['/']);
     }

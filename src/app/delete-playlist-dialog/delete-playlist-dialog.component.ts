@@ -1,7 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { SpotifyWebApiService } from '../services/spotify-web-api.service';
 import { StateService } from '../services/state.service';
@@ -21,7 +19,6 @@ export class DeletePlaylistDialogComponent {
     private dialogRef: MatDialogRef<DeletePlaylistDialogComponent>,
     @Inject(MAT_DIALOG_DATA) private data: IDeletePlaylistDialogData,
     private spotifyWebApiService: SpotifyWebApiService,
-    private matSnackBar: MatSnackBar,
     public _stateService: StateService,
     private router: Router,
   ) {}
@@ -32,11 +29,14 @@ export class DeletePlaylistDialogComponent {
 
   async delete(): Promise<void> {
     this._stateService.setLoading(true);
-    await this.spotifyWebApiService.deletePlaylist(this.data.playlistId);
-
-    await this.router.navigate(['/']);
-    this.dialogRef.close(true);
+    try {
+      await this.spotifyWebApiService.deletePlaylist(this.data.playlistId);
+      this._stateService.setSuccess('Playlist deleted!');
+      await this.router.navigate(['/']);
+      this.dialogRef.close(true);
+    } catch (error) {
+      this._stateService.setError('Failed to delete playlist', error);
+    }
     this._stateService.setLoading(false);
-    this.matSnackBar.open('Deleted playlist');
   }
 }
