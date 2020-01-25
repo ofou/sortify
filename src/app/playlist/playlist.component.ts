@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
@@ -13,10 +13,12 @@ import {
 import {
   ISavePlaylistDialogData,
   SavePlaylistDialogComponent,
+  IUpdatedPlaylistDetails,
 } from '../save-playlist-dialog/save-playlist-dialog.component';
 import { ITrackWFeatures, SpotifyWebApiService } from '../services/spotify-web-api.service';
 import { StateService } from '../services/state.service';
 import { getAlbumCover } from '../shared';
+import { IInfoDialogData, InfoDialogComponent } from '../info-dialog/info-dialog.component';
 
 enum ENonSortableColumns {
   'index' = 'index',
@@ -87,6 +89,13 @@ const DESCRIPTION_REGEX: RegExp = new RegExp(DESCRIPTION_PREFIX + '(.*)' + DESCR
 const TITLE_PREFIX = 'sorted by';
 const TITLE_REGEX: RegExp = new RegExp(TITLE_PREFIX + ' [↑↓] \\S+\\b');
 
+interface ITest {
+  action: () => any;
+  description: string;
+  icon: string;
+  display: () => any;
+}
+
 // open in app link
 // https://open.spotify.com/go?uri=' + playlist.owner.uri+ '&rtd=1'
 
@@ -105,6 +114,51 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     private _matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
   ) {}
+
+  buttons: ITest[] = [
+    {
+      action: this.sortSmartly.bind(this),
+      description: 'Automatically sort smartly',
+      icon: 'flash_auto',
+      display: () => true,
+    },
+    {
+      action: this.savePlaylist.bind(this),
+      description: 'Save',
+      icon: 'save',
+      display: () => true,
+    },
+    {
+      action: this.reset.bind(this),
+      description: 'Reset to initial order',
+      icon: 'undo',
+      display: () => true,
+    },
+    {
+      action: this.shuffle.bind(this),
+      description: 'Shuffle',
+      icon: 'shuffle',
+      display: () => true,
+    },
+    {
+      action: this.update.bind(this),
+      description: 'Update',
+      icon: 'update',
+      display: () => this.ownsPlaylist,
+    },
+    {
+      action: this.delete.bind(this),
+      description: 'Delete',
+      icon: 'delete_outline',
+      display: () => this.ownsPlaylist,
+    },
+    {
+      action: this.viewDetails.bind(this),
+      description: 'View details',
+      icon: 'info',
+      display: () => true,
+    },
+  ];
 
   @ViewChild(MatSort, { static: false }) matSort: MatSort;
 
@@ -152,9 +206,9 @@ export class PlaylistComponent implements OnInit, OnDestroy {
 
   get sortedByString(): string {
     if (this.sortActive && this.sortDirection) {
-      return `Sorted by ${this.sortActive} in ${this.directionString} order`;
+      return `${this.directionString} ${this.sortActive}`;
     }
-    return 'no sorting';
+    return undefined;
   }
 
   get ownsPlaylist(): boolean {
@@ -301,8 +355,14 @@ export class PlaylistComponent implements OnInit, OnDestroy {
       playlistName,
       playlistDescription,
     };
-    this._matDialog.open(SavePlaylistDialogComponent, {
+    const dialog: MatDialogRef<SavePlaylistDialogComponent> = this._matDialog.open(SavePlaylistDialogComponent, {
       data,
+    });
+    dialog.afterClosed().subscribe((updatedDetails: IUpdatedPlaylistDetails) => {
+      if (updatedDetails) {
+        this.playlist = { ...this.playlist, ...updatedDetails };
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -319,6 +379,19 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     this.tracks = this.initialTracks;
     await this.resetQueryParams();
     this.createDataSource();
+  }
+
+  viewDetails(): void {
+    const data: IInfoDialogData = {
+      playlist: this.playlist,
+      playlistLength: this.tracks.length,
+    };
+    this._matDialog.open(InfoDialogComponent, {
+      data,
+      width: '80vw',
+      height: '80vh',
+      disableClose: false,
+    });
   }
 
   async shuffle(): Promise<void> {
@@ -414,7 +487,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   }
 
   get albumCover(): string {
-    return getAlbumCover(this.playlist, true);
+    return getAlbumCover(this.playlist, false);
   }
 
   async sortSmartly(): Promise<void> {}

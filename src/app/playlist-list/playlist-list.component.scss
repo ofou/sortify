@@ -1,10 +1,3 @@
-mat-card-title,
-mat-card-subtitle {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 ::ng-deep {
   .mat-card-header-text {
     max-width: 100%;
@@ -24,8 +17,4 @@ p {
 .select {
   width: 7em;
   margin-right: 2em;
-}
-
-.filters {
-  display: flex;
 }

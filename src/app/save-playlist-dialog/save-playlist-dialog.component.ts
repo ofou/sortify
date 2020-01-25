@@ -19,6 +19,15 @@ enum EWriteMode {
   'createNew' = 'createNew',
 }
 
+export interface IUpdatedPlaylistDetails {
+  name: string;
+  description?: string;
+}
+
+function noWhitespaceValidator(control: FormControl) {
+  return (control.value || '').trim().length !== 0 ? undefined : { whitespace: true };
+}
+
 @Component({
   selector: 'sort-save-playlist-dialog',
   templateUrl: './save-playlist-dialog.component.html',
@@ -26,7 +35,7 @@ enum EWriteMode {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SavePlaylistDialogComponent implements OnInit {
-  playlistNameFC = new FormControl('', [Validators.required]);
+  playlistNameFC = new FormControl('', [Validators.required, noWhitespaceValidator]);
   writeMode: keyof typeof EWriteMode = this.data.ownsPlaylist ? EWriteMode.overWrite : EWriteMode.createNew;
   error: boolean = false;
 
@@ -80,9 +89,13 @@ export class SavePlaylistDialogComponent implements OnInit {
         this.playlistNameFC.value,
         this.data.tracks,
       );
-      await this.spotifyWebApiService.updatePlaylistDetails(id, { description: this.data.playlistDescription });
+
+      if (this.data.playlistDescription) {
+        await this.spotifyWebApiService.updatePlaylistDetails(id, { description: this.data.playlistDescription });
+      }
+
       await this.router.navigate(['playlist', id]);
-      this.dialogRef.close(true);
+      this.dialogRef.close();
       this.matSnackBar.open('New playlist created!');
     } catch {
       this.error = true;
@@ -96,16 +109,20 @@ export class SavePlaylistDialogComponent implements OnInit {
     this._stateService.setLoading(true);
 
     try {
+      const updatedDetails: IUpdatedPlaylistDetails = {
+        name: this.playlistNameFC.value,
+      };
+
+      if (this.data.playlistDescription) {
+        updatedDetails.description = this.data.playlistDescription;
+      }
+
       await Promise.all([
         this.spotifyWebApiService.updatePlaylist(this.data.playlistId, this.data.tracks),
-        this.spotifyWebApiService.updatePlaylistDetails(this.data.playlistId, {
-          name: this.playlistNameFC.value,
-          description: this.data.playlistDescription,
-        }),
+        this.spotifyWebApiService.updatePlaylistDetails(this.data.playlistId, updatedDetails),
       ]);
 
-      this.dialogRef.close(true);
-      this._stateService.setLoading(false);
+      this.dialogRef.close(updatedDetails);
       this.matSnackBar.open('Playlist saved!');
     } catch {
       this.error = true;
@@ -115,6 +132,6 @@ export class SavePlaylistDialogComponent implements OnInit {
   }
 
   cancel(): void {
-    this.dialogRef.close(false);
+    this.dialogRef.close();
   }
 }

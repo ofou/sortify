@@ -18,6 +18,7 @@ import { SavePlaylistDialogComponent } from './save-playlist-dialog/save-playlis
 import { StateService } from './services/state.service';
 import { SpotifyAuthModule } from './spotify-auth';
 import { SpotifyAuthInterceptor2 } from './spotify-auth.interceptor';
+import { InfoDialogComponent } from './info-dialog/info-dialog.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { SpotifyAuthInterceptor2 } from './spotify-auth.interceptor';
     FooterComponent,
     SavePlaylistDialogComponent,
     DeletePlaylistDialogComponent,
+    InfoDialogComponent,
     ReorderingAnimationComponent,
     AuthorizedComponent,
   ],
@@ -48,6 +50,6 @@ import { SpotifyAuthInterceptor2 } from './spotify-auth.interceptor';
     StateService,
   ],
   bootstrap: [AppComponent],
-  entryComponents: [SavePlaylistDialogComponent, DeletePlaylistDialogComponent],
+  entryComponents: [SavePlaylistDialogComponent, DeletePlaylistDialogComponent, InfoDialogComponent],
 })
 export class AppModule {}

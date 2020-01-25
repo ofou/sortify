@@ -1,0 +1,28 @@
+section {
+  flex-direction: row;
+  align-items: center;
+  align-content: center;
+
+  img {
+    object-fit: contain;
+    padding-right: 1em;
+    width: 19em;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  section {
+    flex-direction: column;
+
+    img {
+      padding-right: 0;
+      width: 100%;
+      max-width: calc(100vh / 2);
+    }
+  }
+}
+
+.close-button-wrapper {
+  text-align: right;
+}

@@ -25,10 +25,20 @@ body {
   font-family: $global-font;
   color: white;
   background-color: $background-color;
+  word-break: break-all;
+  word-break: break-word;
 }
 
 a {
   color: white;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
 }
 
 .flex-1 {
@@ -46,4 +56,15 @@ a {
 
 .mat-list-avatar {
   border-radius: unset !important;
+}
+
+.mat-toolbar-row,
+.mat-toolbar-single-row {
+  height: 56px !important;
+}
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

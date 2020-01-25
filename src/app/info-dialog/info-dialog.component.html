@@ -1,0 +1,45 @@
+<div class="close-button-wrapper">
+  <button mat-icon-button mat-dialog-close><mat-icon>close</mat-icon></button>
+</div>
+<section class="flex">
+  <img [src]="albumCover" />
+  <div class="flex-1">
+    <h1>
+      {{ data.playlist.name }}
+    </h1>
+    <p>
+      {{ data.playlist.description }}
+    </p>
+
+    <table>
+      <tbody>
+        <tr>
+          <td>owner:</td>
+          <td>
+            <a [href]="data.playlist.owner.external_urls.spotify" target="_blank">
+              {{ data.playlist.owner.display_name || data.playlist.owner.id }}
+            </a>
+          </td>
+        </tr>
+        <tr>
+          <td>public:</td>
+          <td>{{ data.playlist.public }}</td>
+        </tr>
+        <tr>
+          <td>collaborative:</td>
+          <td>{{ data.playlist.collaborative }}</td>
+        </tr>
+
+        <tr>
+          <td># songs:</td>
+          <td>{{ data.playlistLength }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      <a mat-icon-button matTooltip="Open in Spotify" [href]="data.playlist.external_urls.spotify" target="_blank">
+        <mat-icon>open_in_new</mat-icon>
+      </a>
+    </p>
+  </div>
+</section>
