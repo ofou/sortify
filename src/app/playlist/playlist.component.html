@@ -1,7 +1,7 @@
 <ng-container *ngIf="playlist">
   <mat-toolbar class="mat-elevation-z2">
     <img [src]="albumCover" />
-    <span class="truncate playlist-title">{{ playlist.name }}</span>
+    <span class="truncate playlist-title" [title]="playlist.name">{{ playlist.name }}</span>
     <span *ngIf="sortedByString" class="sorted-text">{{ sortedByString }}</span>
     <span class="inline-buttons">
       <ng-container *ngFor="let button of buttons">

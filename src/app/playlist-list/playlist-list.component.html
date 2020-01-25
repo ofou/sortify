@@ -25,7 +25,7 @@
 <mat-action-list>
   <a mat-list-item [routerLink]="['playlist', playlist.id]" *ngFor="let playlist of filteredPlaylists">
     <img matListAvatar [src]="getAlbumCover(playlist)" />
-    <h3 matLine>{{ playlist.name }}</h3>
+    <h3 matLine [title]="playlist.name">{{ playlist.name }}</h3>
   </a>
 </mat-action-list>
 

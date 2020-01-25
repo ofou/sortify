@@ -216,7 +216,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   }
 
   get ownsPlaylist(): boolean {
-    return this.playlist && this.playlist.owner.id === this.userProfile.id;
+    return this.playlist && this.userProfile && this.playlist.owner.id === this.userProfile.id;
   }
 
   async ngOnInit() {
