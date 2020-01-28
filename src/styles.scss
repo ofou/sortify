@@ -12,6 +12,7 @@ $custom-accent: mat-palette($mat-green, A700);
 $custom-theme: mat-dark-theme($custom-primary, $custom-accent);
 
 $background-color: #212121;
+$font-color: white;
 
 @include angular-material-theme($custom-theme);
 
@@ -23,14 +24,15 @@ $custom-typography: mat-typography-config(
 html,
 body {
   font-family: $global-font;
-  color: white;
+  color: $font-color;
   background-color: $background-color;
   word-break: break-all;
   word-break: break-word;
+  font-size: 16px;
 }
 
 a {
-  color: white;
+  color: #00c853;
 }
 
 .flex {
@@ -50,8 +52,9 @@ a {
 }
 
 .mat-card,
-.mat-table {
-  background-color: $background-color;
+.mat-table,
+mat-dialog-container {
+  background-color: $background-color !important;
 }
 
 .mat-list-avatar {

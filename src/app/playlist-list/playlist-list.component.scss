@@ -1,20 +1,11 @@
-::ng-deep {
-  .mat-card-header-text {
-    max-width: 100%;
+:host {
+  .select {
+    width: 7em;
+    margin-right: 2em;
   }
-}
-
-mat-card {
-  height: 100%;
-}
-
-p {
-  mat-icon {
-    vertical-align: text-bottom;
+  p {
+    mat-icon {
+      vertical-align: text-bottom;
+    }
   }
-}
-
-.select {
-  width: 7em;
-  margin-right: 2em;
 }

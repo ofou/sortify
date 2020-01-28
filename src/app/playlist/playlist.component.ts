@@ -87,14 +87,20 @@ const DESCRIPTION_SUFFIX = SEPARATOR + PRE_AND_SU_FIX;
 const DESCRIPTION_REGEX: RegExp = new RegExp(DESCRIPTION_PREFIX + '(.*)' + DESCRIPTION_SUFFIX);
 
 const TITLE_PREFIX = 'sorted by';
-const TITLE_REGEX: RegExp = new RegExp(TITLE_PREFIX + ' [↑↓] \\S+\\b');
+const TITLE_REGEX: RegExp = /(sorted by [↑↓] \w+\b)/g;
 
-interface ITest {
+interface IPlaylistActionButton {
   action: () => any;
   description: string;
   icon: string;
-  display: () => any;
+  tooltip: () => string;
+  disabled: () => boolean;
+  link: string;
 }
+
+const PLAYLIST_ID_POSITION = 0;
+const ACTIVE_POSITION = 1;
+const DIRECTION_POSITION = 2;
 
 // open in app link
 // https://open.spotify.com/go?uri=' + playlist.owner.uri+ '&rtd=1'
@@ -115,48 +121,71 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
   ) {}
 
-  buttons: ITest[] = [
-    {
-      action: this.sortSmartly.bind(this),
-      description: 'Automatically sort smartly',
-      icon: 'flash_auto',
-      display: () => true,
-    },
+  buttons: IPlaylistActionButton[] = [
+    // {
+    //   action: this.autoSort.bind(this),
+    //   description: 'Auto sort',
+    //   tooltip: () => 'Auto sort',
+    //   icon: 'flash_auto',
+    //   disabled: () => false,
+    //   link: undefined
+    // },
     {
       action: this.savePlaylist.bind(this),
       description: 'Save',
+      tooltip: () => 'Save',
       icon: 'save',
-      display: () => true,
+      disabled: () => false,
+      link: undefined,
     },
     {
       action: this.reset.bind(this),
       description: 'Reset to initial order',
+      tooltip: () => 'Reset to initial order',
       icon: 'undo',
-      display: () => true,
+      disabled: () => false,
+      link: undefined,
     },
     {
       action: this.shuffle.bind(this),
       description: 'Shuffle',
+      tooltip: () => 'Shuffle',
       icon: 'shuffle',
-      display: () => true,
+      disabled: () => false,
+      link: undefined,
     },
     {
-      action: this.update.bind(this),
-      description: 'Update',
-      icon: 'update',
-      display: () => this.canUpdatePlaylist,
+      action: this.refresh.bind(this),
+      description: 'Refresh',
+      tooltip: () =>
+        this.canRefreshPlaylist ? 'Refresh' : 'Description does not have encoded data to make this possible',
+      icon: 'refresh',
+      disabled: () => !this.canRefreshPlaylist,
+      link: undefined,
     },
     {
       action: this.delete.bind(this),
       description: 'Delete',
+      tooltip: () => (this.ownsPlaylist ? 'Delete' : 'You need to own the playlist to delete it'),
       icon: 'delete_outline',
-      display: () => this.ownsPlaylist,
+      disabled: () => !this.ownsPlaylist,
+      link: undefined,
     },
     {
       action: this.viewDetails.bind(this),
       description: 'View details',
+      tooltip: () => 'View details',
       icon: 'info',
-      display: () => true,
+      disabled: () => false,
+      link: undefined,
+    },
+    {
+      action: () => {},
+      description: 'View docs',
+      tooltip: () => 'Docs',
+      icon: 'help_outline',
+      disabled: () => false,
+      link: 'https://github.com/christianmemije/sortify/blob/master/README.md/#usage',
     },
   ];
 
@@ -182,9 +211,37 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   private destroySubject: Subject<void> = new Subject();
   private audioSubject: Subject<void> = new Subject();
 
-  get canUpdatePlaylist(): boolean {
-    const test: RegExpExecArray = DESCRIPTION_REGEX.exec(this.playlist.description);
-    return !!(test && test[1]);
+  get descriptionEncodedData(): string {
+    const matches: RegExpExecArray = DESCRIPTION_REGEX.exec(this.playlist.description);
+    if (matches) {
+      return matches[1];
+    }
+    return undefined;
+  }
+
+  get encodedPlaylistId(): string {
+    if (this.descriptionEncodedData) {
+      return this.descriptionEncodedData.split(SEPARATOR)[PLAYLIST_ID_POSITION];
+    }
+    return undefined;
+  }
+
+  get encodedActive(): string {
+    if (this.descriptionEncodedData) {
+      return this.descriptionEncodedData.split(SEPARATOR)[ACTIVE_POSITION];
+    }
+    return undefined;
+  }
+
+  get encodedDirection(): string {
+    if (this.descriptionEncodedData) {
+      return this.descriptionEncodedData.split(SEPARATOR)[DIRECTION_POSITION];
+    }
+    return undefined;
+  }
+
+  get canRefreshPlaylist(): boolean {
+    return !!this.descriptionEncodedData;
   }
   get playTime(): number {
     if (this.audio && this.audio.currentTime && this.audio.duration) {
@@ -300,9 +357,9 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   }
 
   createDataSource(): void {
-    this.dataSource.data = this.tracks;
     this.dataSource.sort = this.matSort;
     this.dataSource.sortingDataAccessor = sortingDataAccessor;
+    this.dataSource.data = this.tracks;
     this.cdr.detectChanges();
   }
 
@@ -313,19 +370,20 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     });
   }
 
-  async update(): Promise<void> {
-    const test: RegExpExecArray = DESCRIPTION_REGEX.exec(this.playlist.description);
-    if (test && test[1]) {
-      const [active, direction, originalPlaylistId]: string[] = test[1].split(SEPARATOR);
+  async refresh(): Promise<void> {
+    if (this.canRefreshPlaylist) {
       try {
-        this.tracks = await this.spotifyWebApiService.getPlaylistTracksWithFeatures(originalPlaylistId);
-        this._stateService.setSuccess('Playlist updated!');
+        this.tracks = await this.spotifyWebApiService.getPlaylistTracksWithFeatures(this.encodedPlaylistId);
+        this._stateService.setSuccess('Playlist refreshed!');
         await this.router.navigate([], {
           relativeTo: this.route,
-          queryParams: active && direction ? { active, direction } : undefined,
+          queryParams:
+            this.encodedActive && this.encodedDirection
+              ? { active: this.encodedActive, direction: this.encodedDirection }
+              : undefined,
         });
       } catch (error) {
-        this._stateService.setError('Failed to update. Try again.', error);
+        this._stateService.setError('Failed to refresh. Try again.', error);
       }
     }
   }
@@ -335,16 +393,22 @@ export class PlaylistComponent implements OnInit, OnDestroy {
       .sortData(this.dataSource.filteredData, this.dataSource.sort)
       .map((track: ITrackWFeatures) => track.uri)
       .filter((uri: string) => !!uri);
-    let playlistName: string = this.playlist.name;
-    let playlistDescription: string = this.playlist.description;
-    if (this.directionString && this.sortActive) {
-      playlistName = `${playlistName.replace(TITLE_REGEX, '').trim()} ${TITLE_PREFIX} ${this.directionString} ${
-        this.sortActive
-      }`;
-      playlistDescription = `${playlistDescription.replace(DESCRIPTION_REGEX, '').trim()} ${DESCRIPTION_PREFIX}${
-        this.sortActive
-      }${SEPARATOR}${this.sortDirection}${SEPARATOR}${this.playlistId}${DESCRIPTION_SUFFIX}`;
-    }
+    const playlistName =
+      this.directionString && this.sortActive
+        ? `${this.playlist.name.replace(TITLE_REGEX, '').trim()} ${TITLE_PREFIX} ${this.directionString} ${
+            this.sortActive
+          }`
+        : this.playlist.name;
+    const playlistIdToEncode: string = this.encodedPlaylistId || this.playlistId;
+    const activeToEncode: string = this.encodedActive || this.sortActive;
+    const directionToEncode: string = this.encodedDirection || this.sortDirection;
+    const playlistDescription: string =
+      this.playlist.description.replace(DESCRIPTION_REGEX, '').trim() +
+      ' ' +
+      DESCRIPTION_PREFIX +
+      playlistIdToEncode +
+      (activeToEncode && directionToEncode ? SEPARATOR + activeToEncode + SEPARATOR + directionToEncode : '') +
+      DESCRIPTION_SUFFIX;
 
     const data: ISavePlaylistDialogData = {
       ownsPlaylist: this.ownsPlaylist,
@@ -386,8 +450,8 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     };
     this._matDialog.open(InfoDialogComponent, {
       data,
-      width: '80vw',
-      height: '80vh',
+      maxWidth: '80vw',
+      maxHeight: '80vh',
       disableClose: false,
     });
   }
@@ -488,7 +552,9 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     return getAlbumCover(this.playlist, false);
   }
 
-  async sortSmartly(): Promise<void> {}
+  async autoSort(): Promise<void> {
+    // TODO: find optimal sort order
+  }
 
   applyFilters(): void {}
 }

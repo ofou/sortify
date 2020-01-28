@@ -1,27 +1,68 @@
 # Sortify
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.0.
+> Sort Spotify playlists based on various features such as artist, release date, popularity, tempo, danceability, etc.
 
-## Development server
+https://sortify-app.now.sh/
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## Features
 
-## Code scaffolding
+- Sort Spotify playlists by all sorts of attributes:
+  - name, artist, album, release date, duration, added date, popularity, danceability, energy, instrumentalness, key, liveness, loudness, mode, speechiness, tempo, time signature, valence
+- Save the new playlist order by overwriting the playlist or creating a new playlist
+- 100% client-side, so no data is collected
+- Preview tracks
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Screenshots
 
-## Build
+![](./docs/images/login.png)
+![](./docs/images/playlist_list.png)
+![](./docs/images/playlist.png)
+![](./docs/images/save.png)
+![](./docs/images/saved_playlist.png)
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+## Usage
 
-## Running unit tests
+### Save
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+![](./docs/icons/save.svg)
 
-## Running end-to-end tests
+- There are 2 options:
+  - Overwrite - Overwrites the current playlist, only possible if you own the playlist.
+  - Create new - Creates a new playlist.
+- Allows the encoding of playlist & sort state within the description as `stf-PLAYLIST_ID_SORT_KEY_DIRECTION-stf`. This is useful for the Refresh feature which allows keeping a playlist in sync with another one.
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+### Reset
 
-## Further help
+![](./docs/icons/reset.svg)
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+Resets the order of the playlist to the order it had when the page was loaded, does not save until you press save.
+
+### Shuffle
+
+![](./docs/icons/shuffle.svg)
+
+Randomizes the order of the playlist, does not save until you press save.
+
+### Refresh
+
+![](./docs/icons/refresh.svg)
+
+If the playlist's description contains the playlist & sort state encoded (e.g. `stf-PLAYLIST_ID_SORT_KEY_DIRECTION-stf`), which is done upon save, this will pull the playlist the current playlist was based off of, and apply the sorting. Does not save until you press save. This is useful for keeping a playlist in sync with the one it is based off of while keeping sorting order
+
+### Delete
+
+![](./docs/icons/delete.svg)
+
+Only possible if you own the playlist
+
+### Info
+
+![](./docs/icons/info.svg)
+
+View playlist details including title, description, owner, etc. Allows you to open the playlist within Spotify.
+
+### Help
+
+![](./docs/icons/help.svg)
+
+View this documentation

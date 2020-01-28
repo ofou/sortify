@@ -6,7 +6,7 @@
     <button mat-icon-button [matMenuTriggerFor]="menu">
       <mat-icon>more_vert</mat-icon>
     </button>
-    <mat-menu #menu="matMenu">
+    <mat-menu #menu="matMenu" [class]="'user-details-menu'">
       <div class="user-details flex" (click)="$event.stopPropagation()">
         <img
           [src]="(userProfile.images && userProfile.images[userProfile.images.length - 1].url) || fallbackUserImage"

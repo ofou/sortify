@@ -1,151 +1,157 @@
+$base-width: 360px;
+$interval: 75px;
+
 :host {
   display: block;
 
-  ::ng-deep .mat-sort-header-sorted .mat-sort-header-arrow {
-    opacity: 1 !important;
+  .mat-cell,
+  .mat-header-cell {
+    padding: 0.5em;
   }
-}
 
-mat-form-field {
-  font-size: initial;
-}
-
-.mat-cell,
-.mat-header-cell {
-  padding: 0.5em;
-}
-
-td {
-  padding: 0.25em 0.25em 0.25em 0;
-}
-
-.table-wrapper {
-  position: fixed;
-  top: 7em;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  overflow: auto;
-}
-
-table {
-  word-break: normal;
-}
-.mat-toolbar {
-  position: fixed;
-  top: 56px;
-  right: 0;
-  left: 0;
-  z-index: 10000;
-  img {
-    width: 2em;
-    margin: 0 1em 0 0.5em;
-    flex-shrink: 0;
+  .table-wrapper {
+    position: fixed;
+    top: 7em;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    overflow: auto;
   }
-}
 
-.inline-buttons {
-  margin-left: 1em;
+  table {
+    word-break: normal;
+  }
+  .mat-toolbar {
+    position: fixed;
+    top: 56px;
+    right: 0;
+    left: 0;
+    z-index: 100;
+    img {
+      width: 2em;
+      margin: 0 1em 0 0.5em;
+      flex-shrink: 0;
+    }
+  }
 
-  @media (max-width: 360px) {
-    button:nth-child(n + 1) {
+  .sorted-text {
+    color: #00c853;
+  }
+
+  .playlist-title {
+    font-size: small;
+    margin-right: 1em;
+  }
+
+  .inline-buttons {
+    margin-left: 1em;
+
+    @media (max-width: $base-width) {
+      .inline-button:nth-child(n + 1) {
+        display: none;
+      }
+    }
+    @media (max-width: $base-width + $interval) {
+      .inline-button:nth-child(n + 2) {
+        display: none;
+      }
+    }
+    @media (max-width: $base-width + (2* $interval)) {
+      .inline-button:nth-child(n + 3) {
+        display: none;
+      }
+    }
+    @media (max-width: $base-width + (3* $interval)) {
+      .inline-button:nth-child(n + 4) {
+        display: none;
+      }
+    }
+    @media (max-width: $base-width + (4* $interval)) {
+      .inline-button:nth-child(n + 5) {
+        display: none;
+      }
+    }
+    @media (max-width: $base-width + (5* $interval)) {
+      .inline-button:nth-child(n + 6) {
+        display: none;
+      }
+    }
+    @media (max-width: $base-width + (6* $interval)) {
+      .inline-button:nth-child(n + 7) {
+        display: none;
+      }
+    }
+    @media (max-width: $base-width + (7* $interval)) {
+      .inline-button:nth-child(n + 8) {
+        display: none;
+      }
+    }
+  }
+
+  @media (min-width: ($base-width + (7* $interval)) + 1) {
+    .menu-buttons {
       display: none;
     }
   }
-  @media (max-width: 400px) {
-    button:nth-child(n + 2) {
-      display: none;
+
+  ::ng-deep {
+    .mat-sort-header-sorted .mat-sort-header-arrow {
+      opacity: 1 !important;
     }
-  }
-  @media (max-width: 480px) {
-    button:nth-child(n + 3) {
-      display: none;
-    }
-  }
-  @media (max-width: 600px) {
-    button:nth-child(n + 4) {
-      display: none;
-    }
-  }
-  @media (max-width: 720px) {
-    button:nth-child(n + 5) {
-      display: none;
-    }
-  }
-  @media (max-width: 840px) {
-    button:nth-child(n + 6) {
-      display: none;
-    }
-  }
-  @media (max-width: 960px) {
-    button:nth-child(n + 7) {
-      display: none;
+    .mat-table-sticky {
+      background-color: #424242;
     }
   }
 }
 
 ::ng-deep {
   .menu-buttons-menu .mat-menu-content {
-    @media (min-width: 360px + 1) {
+    @media (min-width: $base-width + 1) {
       .mat-menu-item:nth-child(-n + 1) {
         display: none;
       }
     }
-    @media (min-width: 400px + 1) {
+    @media (min-width: ($base-width + ($interval)) + 1) {
       .mat-menu-item:nth-child(-n + 2) {
         display: none;
       }
     }
-    @media (min-width: 480px + 1) {
+    @media (min-width: ($base-width + (2 * $interval)) + 1) {
       .mat-menu-item:nth-child(-n + 3) {
         display: none;
       }
     }
-    @media (min-width: 600px + 1) {
+    @media (min-width: ($base-width + (3 * $interval)) + 1) {
       .mat-menu-item:nth-child(-n + 4) {
         display: none;
       }
     }
 
-    @media (min-width: 720px + 1) {
+    @media (min-width: ($base-width + (4 * $interval)) + 1) {
       .mat-menu-item:nth-child(-n + 5) {
         display: none;
       }
     }
-    @media (min-width: 840px + 1) {
+    @media (min-width: ($base-width + (5 * $interval)) + 1) {
       .mat-menu-item:nth-child(-n + 6) {
         display: none;
       }
     }
 
-    @media (min-width: 960px + 1) {
+    @media (min-width: ($base-width + (6 * $interval)) + 1) {
       .mat-menu-item:nth-child(-n + 7) {
         display: none;
       }
     }
+    @media (min-width: ($base-width + (7 * $interval)) + 1) {
+      .mat-menu-item:nth-child(-n + 8) {
+        display: none;
+      }
+    }
   }
-  @media (min-width: 960px + 1) {
+  @media (min-width: ($base-width + (7 * $interval)) + 1) {
     .menu-buttons-menu {
       display: none;
     }
   }
-}
-
-@media (min-width: 960px + 1) {
-  .menu-buttons {
-    display: none;
-  }
-}
-
-.sorted-text {
-  font-size: small;
-  color: #00c853;
-}
-
-.playlist-title {
-  font-size: smaller;
-}
-
-.playlist-title {
-  margin-right: 1em;
 }

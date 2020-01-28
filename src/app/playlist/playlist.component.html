@@ -2,14 +2,29 @@
   <mat-toolbar class="mat-elevation-z2">
     <img [src]="albumCover" />
     <span class="truncate playlist-title" [title]="playlist.name">{{ playlist.name }}</span>
-    <span *ngIf="sortedByString" class="sorted-text">{{ sortedByString }}</span>
+    <span *ngIf="sortedByString" class="mat-small sorted-text">sort state: {{ sortedByString }}</span>
+
+    <span class="flex-1"></span>
     <span class="inline-buttons">
       <ng-container *ngFor="let button of buttons">
-        <button
-          *ngIf="button.display.call()"
+        <a
+          *ngIf="button.link"
+          [href]="button.link"
           mat-icon-button
+          [disabled]="button.disabled.call()"
+          [matTooltip]="button.tooltip.call()"
+          target="_blank"
+          class="inline-button"
+        >
+          <mat-icon>{{ button.icon }}</mat-icon>
+        </a>
+        <button
+          *ngIf="!button.link"
+          mat-icon-button
+          [disabled]="button.disabled.call()"
+          [matTooltip]="button.tooltip.call()"
           (click)="button.action.call()"
-          [matTooltip]="button.description"
+          class="inline-button"
         >
           <mat-icon>{{ button.icon }}</mat-icon>
         </button>
@@ -22,7 +37,24 @@
       </button>
       <mat-menu #menu="matMenu" [class]="'menu-buttons-menu'">
         <ng-container *ngFor="let button of buttons">
-          <button *ngIf="button.display.call()" mat-menu-item (click)="button.action.call()">
+          <a
+            *ngIf="button.link"
+            [href]="button.link"
+            mat-menu-item
+            [disabled]="button.disabled.call()"
+            [matTooltip]="button.tooltip.call()"
+            target="_blank"
+          >
+            <mat-icon>{{ button.icon }}</mat-icon>
+            <span>{{ button.description }}</span>
+          </a>
+          <button
+            *ngIf="!button.link"
+            mat-menu-item
+            [disabled]="button.disabled.call()"
+            [matTooltip]="button.tooltip.call()"
+            (click)="button.action.call()"
+          >
             <mat-icon>{{ button.icon }}</mat-icon>
             <span>{{ button.description }}</span>
           </button>

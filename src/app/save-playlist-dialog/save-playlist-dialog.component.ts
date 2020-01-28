@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -33,8 +33,9 @@ function noWhitespaceValidator(control: FormControl) {
   styleUrls: ['./save-playlist-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SavePlaylistDialogComponent implements OnInit {
-  playlistNameFC = new FormControl('', [Validators.required, noWhitespaceValidator]);
+export class SavePlaylistDialogComponent {
+  playlistNameFC = new FormControl(this.data.playlistName, [Validators.required, noWhitespaceValidator]);
+  playlistDescriptionFC = new FormControl(this.data.playlistDescription);
   writeMode: keyof typeof EWriteMode = this.data.ownsPlaylist ? EWriteMode.overWrite : EWriteMode.createNew;
   error: boolean = false;
 
@@ -45,10 +46,6 @@ export class SavePlaylistDialogComponent implements OnInit {
     public _stateService: StateService,
     private router: Router,
   ) {}
-
-  ngOnInit(): void {
-    this.playlistNameFC.setValue(this.data.playlistName);
-  }
 
   get writeModes(): string[] {
     return this.data.ownsPlaylist ? Object.keys(EWriteMode) : [EWriteMode.createNew];
@@ -62,7 +59,7 @@ export class SavePlaylistDialogComponent implements OnInit {
     return this.writeMode === EWriteMode.createNew;
   }
 
-  get description(): string {
+  get explanation(): string {
     if (this.data.ownsPlaylist) {
       return 'The playlist can be overwritten or a new playlist can be created';
     }

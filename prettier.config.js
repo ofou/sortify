@@ -8,6 +8,6 @@ module.exports = {
   bracketSpacing: true,
   arrowParens: 'always',
   proseWrap: 'preserve',
-  htmlWhitespaceSensitivity: 'ignore',
+  htmlWhitespaceSensitivity: 'css',
   quoteProps: 'consistent',
 };

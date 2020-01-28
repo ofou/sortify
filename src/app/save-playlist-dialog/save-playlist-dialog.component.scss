@@ -1,16 +1,18 @@
-mat-form-field {
-  width: 100%;
-}
+:host {
+  mat-form-field {
+    width: 100%;
+  }
 
-.buttons {
-  text-align: right;
-}
-mat-radio-button {
-  display: block;
-  padding: 0.5em 0;
-}
+  .buttons {
+    text-align: right;
+  }
+  mat-radio-button {
+    display: block;
+    padding: 0.5em 0;
+  }
 
-.error {
-  color: rgb(244, 67, 54);
-  margin: 1em 0;
+  .error {
+    color: rgb(244, 67, 54);
+    margin: 1em 0;
+  }
 }
