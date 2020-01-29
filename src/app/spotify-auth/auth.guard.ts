@@ -24,7 +24,7 @@ export class AuthGuard implements CanActivate {
         this.tokenSvc.setAuthToken(response);
         return true;
       } else {
-        const currentUrl: string = state.url;
+        const currentUrl: string = state && state.url;
         if (currentUrl === '/') {
           await this.router.navigate(['login']);
         } else {

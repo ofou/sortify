@@ -9,7 +9,12 @@
     <mat-menu #menu="matMenu" [class]="'user-details-menu'">
       <div class="user-details flex" (click)="$event.stopPropagation()">
         <img
-          [src]="(userProfile.images && userProfile.images[userProfile.images.length - 1].url) || fallbackUserImage"
+          [src]="
+            (userProfile.images &&
+              userProfile.images.length > 0 &&
+              userProfile.images[userProfile.images.length - 1].url) ||
+            fallbackUserImage
+          "
         />
         <div>
           <div class="mat-caption">Logged in as</div>

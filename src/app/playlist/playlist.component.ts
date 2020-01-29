@@ -509,7 +509,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   }
 
   getAlbumImageUrl(track: ITrackWFeatures): string {
-    return track.track.album.images[track.track.album.images.length - 1].url;
+    return track.track.album.images.length > 0 && track.track.album.images[track.track.album.images.length - 1].url;
   }
 
   getSpotifyUrl(track: ITrackWFeatures): string {
