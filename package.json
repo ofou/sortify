@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build --prod=true",
+    "gh-pages-build": "npm ci && ng build --prod=true --baseHref=/sortify/",
     "test": "ng test",
     "lint": "ng lint --fix",
     "e2e": "ng e2e",
