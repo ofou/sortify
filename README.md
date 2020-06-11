@@ -2,7 +2,7 @@
 
 > Sort Spotify playlists based on various features such as artist, release date, popularity, tempo, danceability, etc.
 
-https://sortify-app.now.sh/
+https://sortspotifyplaylists.com/
 
 ## Features
 
