@@ -10,15 +10,15 @@ import {
   DeletePlaylistDialogComponent,
   IDeletePlaylistDialogData,
 } from '../delete-playlist-dialog/delete-playlist-dialog.component';
+import { IInfoDialogData, InfoDialogComponent } from '../info-dialog/info-dialog.component';
 import {
   ISavePlaylistDialogData,
-  SavePlaylistDialogComponent,
   IUpdatedPlaylistDetails,
+  SavePlaylistDialogComponent,
 } from '../save-playlist-dialog/save-playlist-dialog.component';
 import { ITrackWFeatures, SpotifyWebApiService } from '../services/spotify-web-api.service';
 import { StateService } from '../services/state.service';
 import { getAlbumCover } from '../shared';
-import { IInfoDialogData, InfoDialogComponent } from '../info-dialog/info-dialog.component';
 
 enum ENonSortableColumns {
   'index' = 'index',
@@ -80,15 +80,6 @@ function getReleaseDate(track: ITrackWFeatures): string {
 const sortableColumns: string[] = Object.keys(ESortableColumns);
 const nonSortableColumns: string[] = Object.keys(ENonSortableColumns);
 
-const PRE_AND_SU_FIX = 'stf';
-const SEPARATOR = '-';
-const DESCRIPTION_PREFIX = PRE_AND_SU_FIX + SEPARATOR;
-const DESCRIPTION_SUFFIX = SEPARATOR + PRE_AND_SU_FIX;
-const DESCRIPTION_REGEX: RegExp = new RegExp(DESCRIPTION_PREFIX + '(.*)' + DESCRIPTION_SUFFIX);
-
-const TITLE_PREFIX = 'sorted by';
-const TITLE_REGEX: RegExp = /(sorted by [↑↓] \w+\b)/g;
-
 interface IPlaylistActionButton {
   action: () => any;
   description: string;
@@ -97,10 +88,6 @@ interface IPlaylistActionButton {
   disabled: () => boolean;
   link: string;
 }
-
-const PLAYLIST_ID_POSITION = 0;
-const ACTIVE_POSITION = 1;
-const DIRECTION_POSITION = 2;
 
 // open in app link
 // https://open.spotify.com/go?uri=' + playlist.owner.uri+ '&rtd=1'
@@ -120,6 +107,11 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     private _matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
   ) {}
+
+  private userProfile: SpotifyApi.CurrentUsersProfileResponse;
+
+  private destroySubject: Subject<void> = new Subject();
+  private audioSubject: Subject<void> = new Subject();
 
   buttons: IPlaylistActionButton[] = [
     // {
@@ -152,15 +144,6 @@ export class PlaylistComponent implements OnInit, OnDestroy {
       tooltip: () => 'Shuffle',
       icon: 'shuffle',
       disabled: () => false,
-      link: undefined,
-    },
-    {
-      action: this.refresh.bind(this),
-      description: 'Refresh',
-      tooltip: () =>
-        this.canRefreshPlaylist ? 'Refresh' : 'Description does not have encoded data to make this possible',
-      icon: 'refresh',
-      disabled: () => !this.canRefreshPlaylist,
       link: undefined,
     },
     {
@@ -206,54 +189,6 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   sortActive = '';
   sortDirection: MatSortDirectionType = EDirection.asc;
 
-  private userProfile: SpotifyApi.CurrentUsersProfileResponse;
-
-  private destroySubject: Subject<void> = new Subject();
-  private audioSubject: Subject<void> = new Subject();
-
-  get descriptionEncodedData(): string {
-    const matches: RegExpExecArray = DESCRIPTION_REGEX.exec(this.playlist.description);
-    if (matches) {
-      return matches[1];
-    }
-    return undefined;
-  }
-
-  get encodedPlaylistId(): string {
-    if (this.descriptionEncodedData) {
-      return this.descriptionEncodedData.split(SEPARATOR)[PLAYLIST_ID_POSITION];
-    }
-    return undefined;
-  }
-
-  get encodedActive(): string {
-    if (this.descriptionEncodedData) {
-      return this.descriptionEncodedData.split(SEPARATOR)[ACTIVE_POSITION];
-    }
-    return undefined;
-  }
-
-  get encodedDirection(): string {
-    if (this.descriptionEncodedData) {
-      return this.descriptionEncodedData.split(SEPARATOR)[DIRECTION_POSITION];
-    }
-    return undefined;
-  }
-
-  get canRefreshPlaylist(): boolean {
-    return !!this.descriptionEncodedData;
-  }
-  get playTime(): number {
-    if (this.audio && this.audio.currentTime && this.audio.duration) {
-      return (this.audio.currentTime / this.audio.duration) * 100;
-    }
-    return 0;
-  }
-
-  get currentlyPlayingTrack(): string {
-    return this.audio && this.audio.src;
-  }
-
   get directionString(): string {
     switch (this.sortDirection) {
       case EDirection.asc:
@@ -274,6 +209,10 @@ export class PlaylistComponent implements OnInit, OnDestroy {
 
   get ownsPlaylist(): boolean {
     return this.playlist && this.userProfile && this.playlist.owner.id === this.userProfile.id;
+  }
+
+  get albumCover(): string {
+    return getAlbumCover(this.playlist, false);
   }
 
   async ngOnInit() {
@@ -323,7 +262,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
         if (!(this.sortActive === this.matSort.active && this.sortDirection === this.matSort.direction)) {
           this.matSort.sort({
             id: this.sortActive,
-            start: undefined,
+            start: this.sortDirection,
             disableClear: false,
           });
           this.createDataSource();
@@ -370,52 +309,18 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     });
   }
 
-  async refresh(): Promise<void> {
-    if (this.canRefreshPlaylist) {
-      try {
-        this.tracks = await this.spotifyWebApiService.getPlaylistTracksWithFeatures(this.encodedPlaylistId);
-        this._stateService.setSuccess('Playlist refreshed!');
-        await this.router.navigate([], {
-          relativeTo: this.route,
-          queryParams:
-            this.encodedActive && this.encodedDirection
-              ? { active: this.encodedActive, direction: this.encodedDirection }
-              : undefined,
-        });
-      } catch (error) {
-        this._stateService.setError('Failed to refresh. Try again.', error);
-      }
-    }
-  }
-
   async savePlaylist(): Promise<void> {
     const updatedOrder: string[] = this.dataSource
       .sortData(this.dataSource.filteredData, this.dataSource.sort)
       .map((track: ITrackWFeatures) => track.uri)
       .filter((uri: string) => !!uri);
-    const playlistName =
-      this.directionString && this.sortActive
-        ? `${this.playlist.name.replace(TITLE_REGEX, '').trim()} ${TITLE_PREFIX} ${this.directionString} ${
-            this.sortActive
-          }`
-        : this.playlist.name;
-    const playlistIdToEncode: string = this.encodedPlaylistId || this.playlistId;
-    const activeToEncode: string = this.encodedActive || this.sortActive;
-    const directionToEncode: string = this.encodedDirection || this.sortDirection;
-    const playlistDescription: string =
-      this.playlist.description.replace(DESCRIPTION_REGEX, '').trim() +
-      ' ' +
-      DESCRIPTION_PREFIX +
-      playlistIdToEncode +
-      (activeToEncode && directionToEncode ? SEPARATOR + activeToEncode + SEPARATOR + directionToEncode : '') +
-      DESCRIPTION_SUFFIX;
 
     const data: ISavePlaylistDialogData = {
       ownsPlaylist: this.ownsPlaylist,
       playlistId: this.playlist.id,
       tracks: updatedOrder,
-      playlistName,
-      playlistDescription,
+      playlistName: this.playlist.name,
+      playlistDescription: this.playlist.description,
     };
     const dialog: MatDialogRef<SavePlaylistDialogComponent> = this._matDialog.open(SavePlaylistDialogComponent, {
       data,
@@ -476,6 +381,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     }
     if (track) {
       this.audio = new Audio(this.getPreviewUrl(track));
+      this.audio.volume = 0.5;
       this.audioSubject = new Subject();
       interval(500)
         .pipe(takeUntil(this.audioSubject))
@@ -546,10 +452,6 @@ export class PlaylistComponent implements OnInit, OnDestroy {
 
   getReleaseDate(track: ITrackWFeatures): string {
     return getReleaseDate(track);
-  }
-
-  get albumCover(): string {
-    return getAlbumCover(this.playlist, false);
   }
 
   async autoSort(): Promise<void> {

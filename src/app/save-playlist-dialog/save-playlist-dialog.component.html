@@ -18,11 +18,6 @@
   <mat-error *ngIf="playlistDescriptionFC.invalid">Required</mat-error>
 </mat-form-field>
 
-<p class="mat-caption">
-  Playlist & sort state is encoded into the description (e.g. stf-details-stf) to allow
-  <a href="https://github.com/christianmemije/sortify/blob/master/README.md/#refresh" target="_blank">refreshing</a>.
-</p>
-
 <mat-card *ngIf="error" class="error">
   <p>Failed to save playlist</p>
 </mat-card>

@@ -28,14 +28,13 @@ function mergeTrackInfo(
   providedIn: 'root',
 })
 export class SpotifyWebApiService {
-  private userProfile: SpotifyApi.CurrentUsersProfileResponse;
-
   constructor(private tokenSvc: TokenService, private _stateService: StateService) {
     spotifyApi.setAccessToken(this.tokenSvc.oAuthToken);
     this._stateService.userProfile$.subscribe((userProfile: SpotifyApi.CurrentUsersProfileResponse) => {
       this.userProfile = userProfile;
     });
   }
+  private userProfile: SpotifyApi.CurrentUsersProfileResponse;
 
   async getPlaylists(): Promise<SpotifyApi.ListOfUsersPlaylistsResponse> {
     const user: SpotifyApi.CurrentUsersProfileResponse = this.userProfile;
@@ -61,6 +60,10 @@ export class SpotifyWebApiService {
 
   async getPlaylist(playlistId: string): Promise<SpotifyApi.SinglePlaylistResponse> {
     return await spotifyApi.getPlaylist(playlistId);
+  }
+
+  async getTrack(trackId: string): Promise<SpotifyApi.SingleTrackResponse> {
+    return await spotifyApi.getTrack(trackId);
   }
 
   async deletePlaylist(playlistId: string): Promise<SpotifyApi.UnfollowPlaylistReponse> {

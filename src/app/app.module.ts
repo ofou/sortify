@@ -9,6 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AuthorizedComponent } from './authorized/authorized.component';
 import { DeletePlaylistDialogComponent } from './delete-playlist-dialog/delete-playlist-dialog.component';
 import { FooterComponent } from './footer/footer.component';
+import { InfoDialogComponent } from './info-dialog/info-dialog.component';
 import { LoginComponent } from './login/login.component';
 import { MaterialModule } from './material.module';
 import { PlaylistListComponent } from './playlist-list/playlist-list.component';
@@ -18,7 +19,7 @@ import { SavePlaylistDialogComponent } from './save-playlist-dialog/save-playlis
 import { StateService } from './services/state.service';
 import { SpotifyAuthModule } from './spotify-auth';
 import { SpotifyAuthInterceptor2 } from './spotify-auth.interceptor';
-import { InfoDialogComponent } from './info-dialog/info-dialog.component';
+import { TinyMusicPlayerModule } from './tiny-music-player/tiny-music-player.module';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,8 @@ import { InfoDialogComponent } from './info-dialog/info-dialog.component';
     HttpClientModule,
     BrowserAnimationsModule,
     MaterialModule,
+
+    TinyMusicPlayerModule,
   ],
   providers: [
     {

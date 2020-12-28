@@ -1,4 +1,4 @@
-import { IAuthConfig, buildAuthUrl } from './spotify-auth/auth.utilities';
+import { buildAuthUrl, IAuthConfig } from './spotify-auth/auth.utilities';
 
 const FALLBACK_IMG = 'https://developer.spotify.com/assets/branding-guidelines/icon3@2x.png';
 const AUTHORIZED_ROUTE = 'authorized';

@@ -31,17 +31,17 @@ export class TokenService {
     return getToken();
   }
 
-  public clearToken(): void {
-    clearToken();
-    this.token$.next(getToken());
-  }
-
   public get authHeader(): { [name: string]: string } {
     return getToken() ? { Authorization: `Bearer ${getToken()}` } : {};
   }
 
   public get authTokens(): Observable<string> {
     return this.token$.asObservable();
+  }
+
+  public clearToken(): void {
+    clearToken();
+    this.token$.next(getToken());
   }
 
   public setAuthToken(spotifyResponse: ISpotifyAuthResponse): boolean {

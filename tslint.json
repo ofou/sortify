@@ -4,6 +4,37 @@
     "array-type": [true, "array"],
     "no-floating-promises": true,
     "no-angle-bracket-type-assertion": false,
-    "no-null-keyword": true
+    "no-null-keyword": true,
+    "member-ordering": {
+      "options": {
+        "order": [
+          "constructor",
+
+          "private-static-field",
+          "protected-static-field",
+          "public-static-field",
+
+          "private-instance-field",
+          "protected-instance-field",
+          "public-instance-field",
+
+          "private-static-accessor",
+          "protected-static-accessor",
+          "public-static-accessor",
+
+          "private-instance-accessor",
+          "protected-instance-accessor",
+          "public-instance-accessor",
+
+          "private-static-method",
+          "protected-static-method",
+          "public-static-method",
+
+          "private-instance-method",
+          "protected-instance-method",
+          "public-instance-method"
+        ]
+      }
+    }
   }
 }

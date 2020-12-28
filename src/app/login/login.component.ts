@@ -11,14 +11,15 @@ import { TokenService } from '../spotify-auth';
 })
 export class LoginComponent implements OnInit {
   constructor(private tokenSvc: TokenService, private router: Router) {}
+  githubUrl = 'https://github.com/christianmemije/sortify';
+  get loginUrl(): string {
+    return generateLoginUrl('');
+  }
 
   async ngOnInit(): Promise<void> {
     // TODO: move this logic out of here
     if (!!this.tokenSvc.oAuthToken) {
       await this.router.navigate(['/']);
     }
-  }
-  get loginUrl(): string {
-    return generateLoginUrl('');
   }
 }

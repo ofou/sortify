@@ -34,11 +34,6 @@ function noWhitespaceValidator(control: FormControl) {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SavePlaylistDialogComponent {
-  playlistNameFC = new FormControl(this.data.playlistName, [Validators.required, noWhitespaceValidator]);
-  playlistDescriptionFC = new FormControl(this.data.playlistDescription);
-  writeMode: keyof typeof EWriteMode = this.data.ownsPlaylist ? EWriteMode.overWrite : EWriteMode.createNew;
-  error: boolean = false;
-
   constructor(
     private dialogRef: MatDialogRef<SavePlaylistDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ISavePlaylistDialogData,
@@ -46,6 +41,10 @@ export class SavePlaylistDialogComponent {
     public _stateService: StateService,
     private router: Router,
   ) {}
+  playlistNameFC = new FormControl(this.data.playlistName, [Validators.required, noWhitespaceValidator]);
+  playlistDescriptionFC = new FormControl(this.data.playlistDescription);
+  writeMode: keyof typeof EWriteMode = this.data.ownsPlaylist ? EWriteMode.overWrite : EWriteMode.createNew;
+  error = false;
 
   get writeModes(): string[] {
     return this.data.ownsPlaylist ? Object.keys(EWriteMode) : [EWriteMode.createNew];

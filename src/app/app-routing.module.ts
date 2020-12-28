@@ -30,6 +30,7 @@ const routes: Routes = [
     path: 'playlist',
     redirectTo: '/',
   },
+
   {
     path: '**',
     redirectTo: '',

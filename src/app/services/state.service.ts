@@ -13,9 +13,9 @@ export class StateService {
     SpotifyApi.CurrentUsersProfileResponse
   >(undefined);
 
-  readonly userProfile$: Observable<SpotifyApi.CurrentUsersProfileResponse> = this.userProfileSubject.asObservable();
-
   private readonly loadingSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+  readonly userProfile$: Observable<SpotifyApi.CurrentUsersProfileResponse> = this.userProfileSubject.asObservable();
   readonly loading$: Observable<boolean> = this.loadingSubject.asObservable();
 
   private get userProfile(): SpotifyApi.CurrentUsersProfileResponse {
@@ -26,14 +26,6 @@ export class StateService {
     this.userProfileSubject.next(userProfile);
   }
 
-  setUserProfile(userProfile: SpotifyApi.CurrentUsersProfileResponse): void {
-    this.userProfile = userProfile;
-  }
-
-  resetUserProfile(): void {
-    this.userProfile = undefined;
-  }
-
   private get loading(): boolean {
     return this.loadingSubject.getValue();
   }
@@ -42,6 +34,14 @@ export class StateService {
     setTimeout(() => {
       this.loadingSubject.next(loading);
     });
+  }
+
+  setUserProfile(userProfile: SpotifyApi.CurrentUsersProfileResponse): void {
+    this.userProfile = userProfile;
+  }
+
+  resetUserProfile(): void {
+    this.userProfile = undefined;
   }
 
   setLoading(loading: boolean): void {

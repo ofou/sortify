@@ -1,0 +1,15 @@
+<button
+  mat-icon-button
+  [matTooltip]="isPlaying ? 'Stop' : 'Play'"
+  (click)="isPlaying ? stop.emit() : play.emit()"
+  [disabled]="disabled"
+>
+  <mat-icon *ngIf="!isPlaying">play_arrow</mat-icon>
+  <mat-icon *ngIf="isPlaying">stop</mat-icon>
+</button>
+<mat-progress-bar
+  mode="determinate"
+  [value]="playTime"
+  color="accent"
+  [ngStyle]="{ visibility: isPlaying ? 'visible' : 'hidden' }"
+></mat-progress-bar>

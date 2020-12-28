@@ -20,26 +20,12 @@ export class PlaylistListComponent implements OnInit {
     private _stateService: StateService,
     private cdr: ChangeDetectorRef,
   ) {}
+  private userProfile: SpotifyApi.CurrentUsersProfileResponse;
 
   playlists: SpotifyApi.PlaylistObjectSimplified[] = [];
   searchFilter = '';
   ownerFilter: EOwner = EOwner.all;
   EOwner: typeof EOwner = EOwner;
-  private userProfile: SpotifyApi.CurrentUsersProfileResponse;
-  async ngOnInit(): Promise<void> {
-    this._stateService.userProfile$.subscribe((userProfile: SpotifyApi.CurrentUsersProfileResponse) => {
-      this.userProfile = userProfile;
-    });
-
-    this._stateService.setLoading(true);
-    try {
-      this.playlists = (await this.spotifyWebApiService.getPlaylists()).items;
-    } catch (error) {
-      this._stateService.setError('Failed to load playlists', error);
-    }
-    this.cdr.detectChanges();
-    this._stateService.setLoading(false);
-  }
   get filteredPlaylists(): SpotifyApi.PlaylistObjectSimplified[] {
     return this.playlists.filter((playlist) => {
       let matchesSearchFilter = true;
@@ -55,6 +41,20 @@ export class PlaylistListComponent implements OnInit {
       }
       return matchesSearchFilter && matchesOwnerFilter;
     });
+  }
+  async ngOnInit(): Promise<void> {
+    this._stateService.userProfile$.subscribe((userProfile: SpotifyApi.CurrentUsersProfileResponse) => {
+      this.userProfile = userProfile;
+    });
+
+    this._stateService.setLoading(true);
+    try {
+      this.playlists = (await this.spotifyWebApiService.getPlaylists()).items;
+    } catch (error) {
+      this._stateService.setError('Failed to load playlists', error);
+    }
+    this.cdr.detectChanges();
+    this._stateService.setLoading(false);
   }
 
   getAlbumCover(playlist: SpotifyApi.PlaylistObjectSimplified): string {

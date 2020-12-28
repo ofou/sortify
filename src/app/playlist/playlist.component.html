@@ -67,7 +67,7 @@
     <table
       mat-table
       [dataSource]="dataSource"
-      class="mat-elevation-z8 "
+      class="mat-elevation-z8"
       matSort
       (matSortChange)="handleSortChange($event)"
     >
@@ -79,21 +79,14 @@
       <ng-container [matColumnDef]="ENonSortableColumns.preview_url">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let track">
-          <button
-            mat-icon-button
-            [matTooltip]="isPlaying(track) ? 'Stop' : 'Play'"
-            (click)="play(track)"
+          <sort-tiny-music-player
+            [isPlaying]="isPlaying(track)"
             [disabled]="!getPreviewUrl(track)"
-          >
-            <mat-icon *ngIf="!isPlaying(track)">play_arrow</mat-icon>
-            <mat-icon *ngIf="isPlaying(track)">stop</mat-icon>
-          </button>
-          <mat-progress-bar
-            *ngIf="isPlaying(track)"
-            mode="determinate"
-            [value]="playTime"
-            color="accent"
-          ></mat-progress-bar>
+            [currentTime]="audio && audio.currentTime"
+            [duration]="audio && audio.duration"
+            (play)="play(track)"
+            (stop)="play(track)"
+          ></sort-tiny-music-player>
         </td>
       </ng-container>
 

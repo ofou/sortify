@@ -18,7 +18,6 @@ const USER_SVG = `
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
-  fallbackUserImage: SafeResourceUrl;
   constructor(
     private router: Router,
     private tokenSvc: TokenService,
@@ -29,6 +28,7 @@ export class AppComponent {
       `data:image/svg+xml,${encodeURIComponent(USER_SVG)}`,
     );
   }
+  fallbackUserImage: SafeResourceUrl;
   async logout(): Promise<void> {
     this._stateService.resetUserProfile();
     this.tokenSvc.clearToken();

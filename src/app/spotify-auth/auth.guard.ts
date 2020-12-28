@@ -11,6 +11,14 @@ const spotifyApi = new SpotifyWebApi();
 export class AuthGuard implements CanActivate {
   constructor(private tokenSvc: TokenService, private router: Router, private _stateService: StateService) {}
 
+  private getSpotifyAuthResponse(next: ActivatedRouteSnapshot): ISpotifyAuthResponse {
+    if (!!next.fragment) {
+      const url: URLSearchParams = new URLSearchParams(next.fragment);
+      return <ISpotifyAuthResponse>(<any>Object.fromEntries(url));
+    }
+    return undefined;
+  }
+
   public async canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
     try {
       spotifyApi.setAccessToken(this.tokenSvc.oAuthToken);
@@ -33,13 +41,5 @@ export class AuthGuard implements CanActivate {
         return false;
       }
     }
-  }
-
-  private getSpotifyAuthResponse(next: ActivatedRouteSnapshot): ISpotifyAuthResponse {
-    if (!!next.fragment) {
-      const url: URLSearchParams = new URLSearchParams(next.fragment);
-      return <ISpotifyAuthResponse>(<any>Object.fromEntries(url));
-    }
-    return undefined;
   }
 }
