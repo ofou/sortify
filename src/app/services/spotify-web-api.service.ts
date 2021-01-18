@@ -92,8 +92,16 @@ export class SpotifyWebApiService {
     );
   }
 
-  async updatePlaylist(playlistId: string, trackIds: string[]): Promise<SpotifyApi.ReplacePlaylistTracksResponse> {
-    return await spotifyApi.replaceTracksInPlaylist(playlistId, trackIds);
+  async updatePlaylist(playlistId: string, trackIds: string[]): Promise<void> {
+    // clear playlist first
+    await spotifyApi.replaceTracksInPlaylist(playlistId, []);
+
+    const ADD_TRACKS_MAX = 100;
+
+    const trackIdsChunked: string[][] = chunk(trackIds, ADD_TRACKS_MAX);
+    for (const tracksChunk of trackIdsChunked) {
+      await spotifyApi.addTracksToPlaylist(playlistId, tracksChunk);
+    }
   }
 
   async updatePlaylistDetails(playlistId: string, details: object): Promise<SpotifyApi.ChangePlaylistDetailsReponse> {
@@ -106,7 +114,7 @@ export class SpotifyWebApiService {
       name: playlistName,
       public: false,
     });
-    await spotifyApi.replaceTracksInPlaylist(playlist.id, trackIds);
+    await this.updatePlaylist(playlist.id, trackIds);
     return playlist;
   }
 
