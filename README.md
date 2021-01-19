@@ -4,6 +4,10 @@
 
 [https://sortspotifyplaylists.com](https://sortspotifyplaylists.com)
 
+<a href="https://www.producthunt.com/posts/sortify-2?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-sortify-2" target="_blank">
+  <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=281330&theme=light" style="width: 33%;" />
+</a>
+
 ## Features
 
 - Sort Spotify playlists by all sorts of attributes:
