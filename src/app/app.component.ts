@@ -12,7 +12,7 @@ const USER_SVG = `
 `;
 
 @Component({
-  selector: 'sort-root',
+  selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

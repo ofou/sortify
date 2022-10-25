@@ -1,5 +1,6 @@
 :host {
   display: block;
+
   .hidden {
     display: none;
   }
@@ -18,7 +19,6 @@
     left: 0;
     bottom: 0;
     overflow: auto;
-
     margin: auto;
     padding: 1em;
   }
@@ -39,7 +39,7 @@
     left: 0;
     bottom: 0;
     z-index: 10000;
-    background-color: rgba(0, 0, 0, 0.32);
+    background-color: rgb(0 0 0 / 32%);
   }
 
   .logo {

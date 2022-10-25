@@ -41,13 +41,15 @@ export class SavePlaylistDialogComponent {
     public _stateService: StateService,
     private router: Router,
   ) {}
-  playlistNameFC = new FormControl(this.data.playlistName, [Validators.required, noWhitespaceValidator]);
+  playlistNameFC = new FormControl(this.data.playlistName, {
+    validators: [Validators.required],
+  });
   playlistDescriptionFC = new FormControl(this.data.playlistDescription);
   writeMode: keyof typeof EWriteMode = this.data.ownsPlaylist ? EWriteMode.overWrite : EWriteMode.createNew;
   error = false;
 
-  get writeModes(): string[] {
-    return this.data.ownsPlaylist ? Object.keys(EWriteMode) : [EWriteMode.createNew];
+  get writeModes(): EWriteMode[] {
+    return this.data.ownsPlaylist ? [EWriteMode.createNew, EWriteMode.overWrite] : [EWriteMode.createNew];
   }
 
   get overWrite(): boolean {
@@ -80,7 +82,7 @@ export class SavePlaylistDialogComponent {
 
     try {
       const { id }: SpotifyApi.CreatePlaylistResponse = await this.spotifyWebApiService.createPlaylist(
-        this.playlistNameFC.value,
+        this.playlistNameFC.value || '',
         this.data.tracks,
       );
 
@@ -104,7 +106,7 @@ export class SavePlaylistDialogComponent {
 
     try {
       const updatedDetails: IUpdatedPlaylistDetails = {
-        name: this.playlistNameFC.value,
+        name: this.playlistNameFC.value || '',
       };
 
       if (this.data.playlistDescription) {

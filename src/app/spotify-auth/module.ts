@@ -8,7 +8,7 @@ import { TokenService } from './token.service';
   providers: [],
 })
 export class SpotifyAuthModule {
-  public static forRoot(): ModuleWithProviders {
+  public static forRoot(): ModuleWithProviders<SpotifyAuthModule> {
     return {
       ngModule: SpotifyAuthModule,
       providers: [TokenService, AuthGuard],

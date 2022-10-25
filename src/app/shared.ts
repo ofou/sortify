@@ -4,7 +4,7 @@ const FALLBACK_IMG = 'https://developer.spotify.com/assets/branding-guidelines/i
 const AUTHORIZED_ROUTE = 'authorized';
 const CLIENT_ID = '1f6c5ac1591b4163b655d1a4b9965c38';
 
-export function getAlbumCover(playlist: SpotifyApi.PlaylistObjectSimplified, biggestSize: boolean): string {
+export function getAlbumCover(playlist: SpotifyApi.PlaylistObjectSimplified | undefined, biggestSize: boolean): string {
   return (
     (playlist && playlist.images.length > 0 && playlist.images[biggestSize ? 0 : playlist.images.length - 1].url) ||
     FALLBACK_IMG

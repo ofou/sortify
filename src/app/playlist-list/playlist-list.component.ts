@@ -20,7 +20,7 @@ export class PlaylistListComponent implements OnInit {
     private _stateService: StateService,
     private cdr: ChangeDetectorRef,
   ) {}
-  private userProfile: SpotifyApi.CurrentUsersProfileResponse;
+  private userProfile: SpotifyApi.CurrentUsersProfileResponse | undefined;
 
   playlists: SpotifyApi.PlaylistObjectSimplified[] = [];
   searchFilter = '';
@@ -33,6 +33,9 @@ export class PlaylistListComponent implements OnInit {
       if (this.searchFilter) {
         matchesSearchFilter = playlist.name.toLowerCase().indexOf(this.searchFilter.toLowerCase()) > -1;
       }
+      if (!this.userProfile) {
+        return false;
+      }
       if (this.ownerFilter === EOwner.owner) {
         matchesOwnerFilter = playlist.owner.id === this.userProfile.id;
       }
@@ -43,7 +46,7 @@ export class PlaylistListComponent implements OnInit {
     });
   }
   async ngOnInit(): Promise<void> {
-    this._stateService.userProfile$.subscribe((userProfile: SpotifyApi.CurrentUsersProfileResponse) => {
+    this._stateService.userProfile$.subscribe((userProfile: SpotifyApi.CurrentUsersProfileResponse | undefined) => {
       this.userProfile = userProfile;
     });
 

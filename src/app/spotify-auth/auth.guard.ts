@@ -11,7 +11,7 @@ const spotifyApi = new SpotifyWebApi();
 export class AuthGuard implements CanActivate {
   constructor(private tokenSvc: TokenService, private router: Router, private _stateService: StateService) {}
 
-  private getSpotifyAuthResponse(next: ActivatedRouteSnapshot): ISpotifyAuthResponse {
+  private getSpotifyAuthResponse(next: ActivatedRouteSnapshot): ISpotifyAuthResponse | undefined {
     if (!!next.fragment) {
       const url: URLSearchParams = new URLSearchParams(next.fragment);
       return <ISpotifyAuthResponse>(<any>Object.fromEntries(url));

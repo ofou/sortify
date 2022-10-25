@@ -20,7 +20,7 @@ function mergeTrackInfo(
       ...trackFeatures.audio_features[index],
     }));
   } else {
-    return undefined;
+    return [];
   }
 }
 
@@ -30,15 +30,15 @@ function mergeTrackInfo(
 export class SpotifyWebApiService {
   constructor(private tokenSvc: TokenService, private _stateService: StateService) {
     spotifyApi.setAccessToken(this.tokenSvc.oAuthToken);
-    this._stateService.userProfile$.subscribe((userProfile: SpotifyApi.CurrentUsersProfileResponse) => {
+    this._stateService.userProfile$.subscribe((userProfile: SpotifyApi.CurrentUsersProfileResponse | undefined) => {
       this.userProfile = userProfile;
     });
   }
-  private userProfile: SpotifyApi.CurrentUsersProfileResponse;
+  private userProfile: SpotifyApi.CurrentUsersProfileResponse | undefined;
 
   async getPlaylists(): Promise<SpotifyApi.ListOfUsersPlaylistsResponse> {
-    const user: SpotifyApi.CurrentUsersProfileResponse = this.userProfile;
-    const playlistsResponse: SpotifyApi.ListOfUsersPlaylistsResponse = await spotifyApi.getUserPlaylists(user.id, {
+    const user: SpotifyApi.CurrentUsersProfileResponse | undefined = this.userProfile;
+    const playlistsResponse: SpotifyApi.ListOfUsersPlaylistsResponse = await spotifyApi.getUserPlaylists(user?.id, {
       limit: MAX_LIMIT,
     });
     const remaining: number = playlistsResponse.total - MAX_LIMIT;
@@ -46,7 +46,7 @@ export class SpotifyWebApiService {
     const necessaryCalls: Promise<SpotifyApi.ListOfUsersPlaylistsResponse>[] = Array.from(
       Array(numNecessaryCalls).keys(),
     ).map((index: number) => {
-      return spotifyApi.getUserPlaylists(user.id, { offset: (index + 1) * MAX_LIMIT, limit: MAX_LIMIT });
+      return spotifyApi.getUserPlaylists(user?.id, { offset: (index + 1) * MAX_LIMIT, limit: MAX_LIMIT });
     });
     const remainingPlaylistsResponses: SpotifyApi.ListOfUsersPlaylistsResponse[] = await Promise.all(necessaryCalls);
     return remainingPlaylistsResponses.reduce(
@@ -109,8 +109,8 @@ export class SpotifyWebApiService {
   }
 
   async createPlaylist(playlistName: string, trackIds: string[]): Promise<SpotifyApi.CreatePlaylistResponse> {
-    const user: SpotifyApi.CurrentUsersProfileResponse = this.userProfile;
-    const playlist: SpotifyApi.CreatePlaylistResponse = await spotifyApi.createPlaylist(user.id, {
+    const user: SpotifyApi.CurrentUsersProfileResponse | undefined = this.userProfile;
+    const playlist: SpotifyApi.CreatePlaylistResponse = await spotifyApi.createPlaylist(user?.id || '', {
       name: playlistName,
       public: false,
     });
@@ -127,9 +127,7 @@ export class SpotifyWebApiService {
 
   async getTopSongsPlaylists(): Promise<SpotifyApi.PlaylistTrackResponse[]> {
     const topSongsPlaylists: SpotifyApi.CategoryPlaylistsReponse = await spotifyApi.getCategoryPlaylists('2019');
-    const playlistPromises: Promise<
-      SpotifyApi.PlaylistTrackResponse
-    >[] = topSongsPlaylists.playlists.items
+    const playlistPromises: Promise<SpotifyApi.PlaylistTrackResponse>[] = topSongsPlaylists.playlists.items
       .filter((playlist: SpotifyApi.PlaylistObjectSimplified) => playlist.name.startsWith('Your Top Songs'))
       .map((playlist: SpotifyApi.PlaylistObjectSimplified) => this.getPlaylistTracks(playlist.id));
     return await Promise.all(playlistPromises);

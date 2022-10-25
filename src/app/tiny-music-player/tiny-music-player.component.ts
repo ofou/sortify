@@ -8,7 +8,7 @@ import { takeUntil } from 'rxjs/operators';
   styleUrls: ['./tiny-music-player.component.scss'],
 })
 export class TinyMusicPlayerComponent {
-  @Input() isPlaying: string = undefined;
+  @Input() isPlaying: boolean = false;
   @Input() disabled = false;
   @Input() currentTime = 0;
   @Input() duration = 0;

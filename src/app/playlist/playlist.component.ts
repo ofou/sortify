@@ -69,7 +69,7 @@ function sortingDataAccessor(track: ITrackWFeatures, sortHeaderId: string): stri
   } else if (sortHeaderId === ESortableColumns.popularity) {
     return track.track.popularity;
   } else {
-    return track[sortHeaderId];
+    return (track as any)[sortHeaderId];
   }
 }
 
@@ -86,7 +86,7 @@ interface IPlaylistActionButton {
   icon: string;
   tooltip: () => string;
   disabled: () => boolean;
-  link: string;
+  link: string | undefined;
 }
 
 // open in app link
@@ -108,7 +108,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
   ) {}
 
-  private userProfile: SpotifyApi.CurrentUsersProfileResponse;
+  private userProfile: SpotifyApi.CurrentUsersProfileResponse | undefined;
 
   private destroySubject: Subject<void> = new Subject();
   private audioSubject: Subject<void> = new Subject();
@@ -172,15 +172,15 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     },
   ];
 
-  @ViewChild(MatSort, { static: false }) matSort: MatSort;
+  @ViewChild(MatSort, { static: false }) matSort: MatSort | undefined;
 
-  playlistId: string;
-  playlist: SpotifyApi.SinglePlaylistResponse;
-  tracks: ITrackWFeatures[];
-  initialTracks: ITrackWFeatures[];
+  playlistId: string | undefined;
+  playlist: SpotifyApi.SinglePlaylistResponse | undefined;
+  tracks: ITrackWFeatures[] | undefined;
+  initialTracks: ITrackWFeatures[] | undefined;
 
   dataSource: MatTableDataSource<ITrackWFeatures> = new MatTableDataSource();
-  audio: HTMLAudioElement;
+  audio: HTMLAudioElement | undefined;
 
   ENonSortableColumns: typeof ENonSortableColumns = ENonSortableColumns;
   ESortableColumns: typeof ESortableColumns = ESortableColumns;
@@ -196,7 +196,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
       case EDirection.desc:
         return '↓';
       default:
-        return undefined;
+        return '';
     }
   }
 
@@ -204,11 +204,11 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     if (this.sortActive && this.sortDirection) {
       return `${this.directionString} ${this.sortActive}`;
     }
-    return undefined;
+    return '';
   }
 
   get ownsPlaylist(): boolean {
-    return this.playlist && this.userProfile && this.playlist.owner.id === this.userProfile.id;
+    return (this.playlist && this.userProfile && this.playlist.owner.id === this.userProfile.id) || false;
   }
 
   get albumCover(): string {
@@ -221,16 +221,16 @@ export class PlaylistComponent implements OnInit, OnDestroy {
 
     this._stateService.userProfile$
       .pipe(takeUntil(this.destroySubject))
-      .subscribe((userProfile: SpotifyApi.CurrentUsersProfileResponse) => {
+      .subscribe((userProfile: SpotifyApi.CurrentUsersProfileResponse | undefined) => {
         this.userProfile = userProfile;
         this.cdr.detectChanges();
       });
 
     this.route.paramMap.subscribe(async (params: ParamMap) => {
-      this.playlistId = params.get('playlistId');
+      this.playlistId = params.get('playlistId') || undefined;
       try {
-        this.playlist = await this.spotifyWebApiService.getPlaylist(this.playlistId);
-        const tracks = await this.spotifyWebApiService.getPlaylistTracksWithFeatures(this.playlistId);
+        this.playlist = await this.spotifyWebApiService.getPlaylist(this.playlistId || '');
+        const tracks = await this.spotifyWebApiService.getPlaylistTracksWithFeatures(this.playlistId || '');
         this.tracks = tracks;
         this.initialTracks = this.tracks;
         this.createDataSource();
@@ -248,8 +248,8 @@ export class PlaylistComponent implements OnInit, OnDestroy {
 
   handleQueryParams(): void {
     this.route.queryParamMap.subscribe(async (queryParams: ParamMap) => {
-      const active: string = queryParams.get('active');
-      const direction: string = queryParams.get('direction');
+      const active: string | undefined = queryParams.get('active') || undefined;
+      const direction: string | undefined = queryParams.get('direction') || undefined;
       if (
         active &&
         direction &&
@@ -259,8 +259,8 @@ export class PlaylistComponent implements OnInit, OnDestroy {
         this.sortActive = active;
         this.sortDirection = <MatSortDirectionType>direction;
 
-        if (!(this.sortActive === this.matSort.active && this.sortDirection === this.matSort.direction)) {
-          this.matSort.sort({
+        if (!(this.sortActive === this.matSort?.active && this.sortDirection === this.matSort.direction)) {
+          this.matSort?.sort({
             id: this.sortActive,
             start: this.sortDirection,
             disableClear: false,
@@ -271,9 +271,9 @@ export class PlaylistComponent implements OnInit, OnDestroy {
         this.sortActive = '';
         this.sortDirection = EDirection.asc;
         // reset
-        this.matSort.sort({
+        this.matSort?.sort({
           id: this.sortActive,
-          start: undefined,
+          start: undefined || 'asc',
           disableClear: false,
         });
         this.createDataSource();
@@ -296,9 +296,9 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   }
 
   createDataSource(): void {
-    this.dataSource.sort = this.matSort;
+    this.dataSource.sort = this.matSort || null;
     this.dataSource.sortingDataAccessor = sortingDataAccessor;
-    this.dataSource.data = this.tracks;
+    this.dataSource.data = this.tracks || [];
     this.cdr.detectChanges();
   }
 
@@ -310,32 +310,36 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   }
 
   async savePlaylist(): Promise<void> {
-    const updatedOrder: string[] = this.dataSource
-      .sortData(this.dataSource.filteredData, this.dataSource.sort)
-      .map((track: ITrackWFeatures) => track.uri)
-      .filter((uri: string) => !!uri);
+    if (this.dataSource.sort) {
+      const updatedOrder: string[] = this.dataSource
+        .sortData(this.dataSource.filteredData, this.dataSource.sort)
+        .map((track: ITrackWFeatures) => track.uri)
+        .filter((uri: string) => !!uri);
 
-    const data: ISavePlaylistDialogData = {
-      ownsPlaylist: this.ownsPlaylist,
-      playlistId: this.playlist.id,
-      tracks: updatedOrder,
-      playlistName: this.playlist.name,
-      playlistDescription: this.playlist.description,
-    };
-    const dialog: MatDialogRef<SavePlaylistDialogComponent> = this._matDialog.open(SavePlaylistDialogComponent, {
-      data,
-    });
-    dialog.afterClosed().subscribe((updatedDetails: IUpdatedPlaylistDetails) => {
-      if (updatedDetails) {
-        this.playlist = { ...this.playlist, ...updatedDetails };
-        this.cdr.detectChanges();
+      if (this.playlist) {
+        const data: ISavePlaylistDialogData = {
+          ownsPlaylist: this.ownsPlaylist,
+          playlistId: this.playlist?.id,
+          tracks: updatedOrder,
+          playlistName: this.playlist.name,
+          playlistDescription: this.playlist.description,
+        };
+        const dialog: MatDialogRef<SavePlaylistDialogComponent> = this._matDialog.open(SavePlaylistDialogComponent, {
+          data,
+        });
+        dialog.afterClosed().subscribe((updatedDetails: IUpdatedPlaylistDetails) => {
+          if (updatedDetails && this.playlist) {
+            this.playlist = { ...this.playlist, ...updatedDetails };
+            this.cdr.detectChanges();
+          }
+        });
       }
-    });
+    }
   }
 
   async delete(): Promise<void> {
     const data: IDeletePlaylistDialogData = {
-      playlistId: this.playlist.id,
+      playlistId: this.playlist?.id || '',
     };
     this._matDialog.open(DeletePlaylistDialogComponent, {
       data,
@@ -349,16 +353,18 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   }
 
   viewDetails(): void {
-    const data: IInfoDialogData = {
-      playlist: this.playlist,
-      playlistLength: this.tracks.length,
-    };
-    this._matDialog.open(InfoDialogComponent, {
-      data,
-      maxWidth: '80vw',
-      maxHeight: '80vh',
-      disableClose: false,
-    });
+    if (this.playlist) {
+      const data: IInfoDialogData = {
+        playlist: this.playlist,
+        playlistLength: this.tracks?.length || 0,
+      };
+      this._matDialog.open(InfoDialogComponent, {
+        data,
+        maxWidth: '80vw',
+        maxHeight: '80vh',
+        disableClose: false,
+      });
+    }
   }
 
   async shuffle(): Promise<void> {
@@ -403,7 +409,6 @@ export class PlaylistComponent implements OnInit, OnDestroy {
       this.audio = undefined;
       this.audioSubject.next();
       this.audioSubject.complete();
-      this.audioSubject = undefined;
     }
   }
   isPlaying(track: ITrackWFeatures): boolean {
@@ -415,7 +420,9 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   }
 
   getAlbumImageUrl(track: ITrackWFeatures): string {
-    return track.track.album.images.length > 0 && track.track.album.images[track.track.album.images.length - 1].url;
+    return (
+      (track.track.album.images.length > 0 && track.track.album.images[track.track.album.images.length - 1].url) || ''
+    );
   }
 
   getSpotifyUrl(track: ITrackWFeatures): string {

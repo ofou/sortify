@@ -11,8 +11,8 @@
           *ngIf="button.link"
           [href]="button.link"
           mat-icon-button
-          [disabled]="button.disabled.call()"
-          [matTooltip]="button.tooltip.call()"
+          [disabled]="button.disabled()"
+          [matTooltip]="button.tooltip()"
           target="_blank"
           class="inline-button"
         >
@@ -21,9 +21,9 @@
         <button
           *ngIf="!button.link"
           mat-icon-button
-          [disabled]="button.disabled.call()"
-          [matTooltip]="button.tooltip.call()"
-          (click)="button.action.call()"
+          [disabled]="button.disabled()"
+          [matTooltip]="button.tooltip()"
+          (click)="button.action()"
           class="inline-button"
         >
           <mat-icon>{{ button.icon }}</mat-icon>
@@ -41,8 +41,8 @@
             *ngIf="button.link"
             [href]="button.link"
             mat-menu-item
-            [disabled]="button.disabled.call()"
-            [matTooltip]="button.tooltip.call()"
+            [disabled]="button.disabled()"
+            [matTooltip]="button.tooltip()"
             target="_blank"
           >
             <mat-icon>{{ button.icon }}</mat-icon>
@@ -51,9 +51,9 @@
           <button
             *ngIf="!button.link"
             mat-menu-item
-            [disabled]="button.disabled.call()"
-            [matTooltip]="button.tooltip.call()"
-            (click)="button.action.call()"
+            [disabled]="button.disabled()"
+            [matTooltip]="button.tooltip()"
+            (click)="button.action()"
           >
             <mat-icon>{{ button.icon }}</mat-icon>
             <span>{{ button.description }}</span>
@@ -82,8 +82,8 @@
           <sort-tiny-music-player
             [isPlaying]="isPlaying(track)"
             [disabled]="!getPreviewUrl(track)"
-            [currentTime]="audio && audio.currentTime"
-            [duration]="audio && audio.duration"
+            [currentTime]="(audio && audio.currentTime) || 0"
+            [duration]="(audio && audio.duration) || 0"
             (play)="play(track)"
             (stop)="play(track)"
           ></sort-tiny-music-player>

@@ -1,53 +1,27 @@
 # Sortify
 
-> Sort Spotify playlists based on various features such as artist, release date, popularity, tempo, danceability, etc.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.2.6.
 
-[https://sortspotifyplaylists.com](https://sortspotifyplaylists.com)
+## Development server
 
-<a href="https://www.producthunt.com/posts/sortify-2?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-sortify-2" target="_blank">
-  <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=281330&theme=light" style="width: 33%;" />
-</a>
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
-## Features
+## Code scaffolding
 
-- Sort Spotify playlists by all sorts of attributes:
-  - name, artist, album, release date, duration, added date, popularity, danceability, energy, instrumentalness, key, liveness, loudness, mode, speechiness, tempo, time signature, valence
-- Save the new playlist order by overwriting the playlist or creating a new playlist
-- 100% client-side, so no data is collected
-- Preview tracks
+Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-## Screenshots
+## Build
 
-![](./docs/images/login.png)
-![](./docs/images/playlist_list.png)
-![](./docs/images/playlist.png)
-![](./docs/images/tempo.png)
-![](./docs/images/save.png)
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
-## Usage
+## Running unit tests
 
-### Save
+Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-- There are 2 options:
-  - Overwrite - Overwrites the current playlist, only possible if you own the playlist.
-  - Create new - Creates a new playlist.
+## Running end-to-end tests
 
-### Reset
+Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
 
-Resets the order of the playlist to the order it had when the page was loaded, does not save until you press save.
+## Further help
 
-### Shuffle
-
-Randomizes the order of the playlist, does not save until you press save.
-
-### Delete
-
-Only possible if you own the playlist
-
-### Info
-
-View playlist details including title, description, owner, etc. Allows you to open the playlist within Spotify.
-
-### Help
-
-View this documentation
+To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.

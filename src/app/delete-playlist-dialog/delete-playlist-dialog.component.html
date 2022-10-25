@@ -4,7 +4,5 @@
 
 <div class="buttons">
   <button mat-button (click)="cancel()" [disabled]="_stateService.loading$ | async">Cancel</button>
-  <button mat-button color="warn" (click)="delete()" [disabled]="_stateService.loading$ | async">
-    Delete
-  </button>
+  <button mat-button color="warn" (click)="delete()" [disabled]="_stateService.loading$ | async">Delete</button>
 </div>

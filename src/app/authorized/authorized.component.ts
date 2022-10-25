@@ -17,8 +17,8 @@ export class AuthorizedComponent implements OnInit {
 
   public async ngOnInit(): Promise<void> {
     this._stateService.setLoading(true);
-    const params: URLSearchParams = new URLSearchParams(this.activatedRoute.snapshot.fragment);
-    let redirectToUrl: string;
+    const params: URLSearchParams = new URLSearchParams(this.activatedRoute.snapshot.fragment || undefined);
+    let redirectToUrl: string = '';
     for (const param of params) {
       if (param[0] === 'state') {
         redirectToUrl = decodeURIComponent(atob(param[1]));

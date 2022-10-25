@@ -35,7 +35,7 @@ export type SpotifyScope =
 const requestAuthUrl = 'https://accounts.spotify.com/authorize';
 
 export function buildAuthUrl(config: IAuthConfig): string {
-  let params = [];
+  let params: string[] = [];
   for (const [key, value] of Object.entries(config)) {
     let param: string;
     if (typeof value === 'object') {

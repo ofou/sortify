@@ -12,7 +12,7 @@ export interface ISpotifyAuthResponse {
 }
 
 function getToken(): string {
-  return localStorage.getItem(TOKEN_KEY);
+  return localStorage.getItem(TOKEN_KEY) || '';
 }
 
 function setToken(token: string): void {

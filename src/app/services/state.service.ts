@@ -9,20 +9,20 @@ import { Observable } from 'rxjs/internal/Observable';
 export class StateService {
   constructor(private matSnackBar: MatSnackBar) {}
 
-  private readonly userProfileSubject: BehaviorSubject<SpotifyApi.CurrentUsersProfileResponse> = new BehaviorSubject<
-    SpotifyApi.CurrentUsersProfileResponse
-  >(undefined);
+  private readonly userProfileSubject: BehaviorSubject<SpotifyApi.CurrentUsersProfileResponse | undefined> =
+    new BehaviorSubject<SpotifyApi.CurrentUsersProfileResponse | undefined>(undefined);
 
   private readonly loadingSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  readonly userProfile$: Observable<SpotifyApi.CurrentUsersProfileResponse> = this.userProfileSubject.asObservable();
+  readonly userProfile$: Observable<SpotifyApi.CurrentUsersProfileResponse | undefined> =
+    this.userProfileSubject.asObservable();
   readonly loading$: Observable<boolean> = this.loadingSubject.asObservable();
 
-  private get userProfile(): SpotifyApi.CurrentUsersProfileResponse {
+  private get userProfile(): SpotifyApi.CurrentUsersProfileResponse | undefined {
     return this.userProfileSubject.getValue();
   }
 
-  private set userProfile(userProfile: SpotifyApi.CurrentUsersProfileResponse) {
+  private set userProfile(userProfile: SpotifyApi.CurrentUsersProfileResponse | undefined) {
     this.userProfileSubject.next(userProfile);
   }
 
