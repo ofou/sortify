@@ -20,6 +20,7 @@ import { StateService } from './services/state.service';
 import { SpotifyAuthModule } from './spotify-auth';
 import { SpotifyAuthInterceptor2 } from './spotify-auth.interceptor';
 import { TinyMusicPlayerModule } from './tiny-music-player/tiny-music-player.module';
+import { SpotifyIconComponent } from './spotify-icon/spotify-icon.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { TinyMusicPlayerModule } from './tiny-music-player/tiny-music-player.mod
     InfoDialogComponent,
     ReorderingAnimationComponent,
     AuthorizedComponent,
+    SpotifyIconComponent,
   ],
   imports: [
     BrowserModule,
