@@ -5,7 +5,22 @@
 <section>
   <a mat-raised-button color="accent" [href]="loginUrl">Login with Spotify</a>
 </section>
+
+<section>
+  <button mat-button color="warn" (click)="handleClick()">Watch a YouTube demo</button>
+</section>
+
 <section>
   <a mat-button color="accent" [href]="githubUrl">View GitHub repo</a>
 </section>
 <sort-reordering-animation class="animation"></sort-reordering-animation>
+
+<h2 id="yt">Demo</h2>
+<div class="iframe-container">
+  <iframe
+    src="https://www.youtube-nocookie.com/embed/HO_rdACBNng"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen
+  ></iframe>
+</div>

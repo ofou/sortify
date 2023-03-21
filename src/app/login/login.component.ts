@@ -22,4 +22,8 @@ export class LoginComponent implements OnInit {
       await this.router.navigate(['/']);
     }
   }
+
+  handleClick() {
+    document.querySelector('iframe')?.scrollIntoView(true);
+  }
 }
