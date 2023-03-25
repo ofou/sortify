@@ -26,6 +26,15 @@
   <a mat-list-item [routerLink]="['playlist', playlist.id]" *ngFor="let playlist of filteredPlaylists">
     <img matListAvatar [src]="getAlbumCover(playlist)" />
     <h3 matLine [title]="playlist.name">{{ playlist.name }}</h3>
+    <a
+      mat-icon-button
+      matTooltip="Open in Spotify"
+      [href]="playlist.external_urls.spotify"
+      target="_blank"
+      (click)="onLinkClick($event)"
+    >
+      <spotify-icon></spotify-icon>
+    </a>
   </a>
 </mat-action-list>
 

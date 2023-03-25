@@ -63,4 +63,8 @@ export class PlaylistListComponent implements OnInit {
   getAlbumCover(playlist: SpotifyApi.PlaylistObjectSimplified): string {
     return getAlbumCover(playlist, false);
   }
+
+  onLinkClick(event: MouseEvent) {
+    event.stopPropagation();
+  }
 }
