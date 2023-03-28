@@ -465,5 +465,19 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     // TODO: find optimal sort order
   }
 
+  async sortByKey(tracks: ITrackWFeatures[]): Promise<void> {
+    const circleOfFifths = {
+      major: [0, 7, 2, 9, 4, 11, 6, 1, 8, 3, 10, 5], // starts on C major
+      minor: [9, 4, 11, 6, 1, 8, 3, 10, 5, 0, 7, 2], // starts on A minor
+    };
+
+    tracks.sort((a, b) => {
+      const aKeyIndex = circleOfFifths[a.mode ? 'major' : 'minor'].indexOf(a.key);
+      const bKeyIndex = circleOfFifths[b.mode ? 'major' : 'minor'].indexOf(b.key);
+
+      return aKeyIndex - bKeyIndex;
+    });
+  }
+
   applyFilters(): void {}
 }
